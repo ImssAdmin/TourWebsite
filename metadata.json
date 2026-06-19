@@ -1,0 +1,6 @@
+{
+  "name": "Visa Consultancy",
+  "description": "Premium student, tourist, work permit, and startup investor visa consultation platform with premium multi-page UI, custom calculators, tracker tools, and corporate compliant panels.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
