@@ -31,6 +31,7 @@ const users = [
 ];
 
 const DATA_FILE = path.join(process.cwd(), "data.json");
+const CONTACTS_FILE = path.join(process.cwd(), "contacts.json");
 
 // Middleware to authenticate JWT
 // @ts-ignore
@@ -66,7 +67,7 @@ const authorizeRoles = (...roles) => {
 app.post("/api/login", (req, res) => {
   const { username, password } = req.body;
   const user = users.find(u => u.username === username && u.password === password);
-  
+
   if (!user) {
     return res.status(401).json({ error: "Invalid credentials" });
   }
@@ -114,6 +115,44 @@ app.post("/api/data", authenticateJWT, authorizeRoles("Super Admin", "Admin", "E
     res.json({ message: "Data saved successfully" });
   } catch (error) {
     res.status(500).json({ error: "Failed to save data" });
+  }
+});
+
+// Submit a new contact message
+app.post("/api/contact", (req, res) => {
+  try {
+    const newContact = {
+      id: Date.now().toString(),
+      ...req.body,
+      createdAt: new Date().toISOString()
+    };
+
+    let contacts = [];
+    if (fs.existsSync(CONTACTS_FILE)) {
+      contacts = JSON.parse(fs.readFileSync(CONTACTS_FILE, "utf-8"));
+    }
+
+    contacts.unshift(newContact); // Add to beginning
+    fs.writeFileSync(CONTACTS_FILE, JSON.stringify(contacts, null, 2));
+
+    res.json({ message: "Message submitted successfully", success: true });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to submit message", success: false });
+  }
+});
+
+// Read contact messages - accessible by roles with read access
+// @ts-ignore
+app.get("/api/contacts", authenticateJWT, authorizeRoles("Super Admin", "Admin", "Editor", "Manager"), (req, res) => {
+  try {
+    if (fs.existsSync(CONTACTS_FILE)) {
+      const data = fs.readFileSync(CONTACTS_FILE, "utf-8");
+      res.json(JSON.parse(data));
+    } else {
+      res.json([]);
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Failed to read contacts" });
   }
 });
 

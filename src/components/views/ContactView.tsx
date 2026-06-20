@@ -39,19 +39,40 @@ export default function ContactView({ lang, onNavigate }: ContactViewProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const handleSubmitContactForm = (e: React.FormEvent) => {
+  const handleSubmitContactForm = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate real database or email dispatch
-    setTimeout(() => {
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fullName,
+          email,
+          phone,
+          visaType,
+          profileMessage,
+        }),
+      });
+
+      if (response.ok) {
+        setIsSubmitting(false);
+        setIsSubmitted(true);
+        setFullName("");
+        setEmail("");
+        setPhone("");
+        setProfileMessage("");
+      } else {
+        setIsSubmitting(false);
+        alert(lang === "en" ? "Failed to submit. Please try again." : "দুঃখিত, আবার চেষ্টা করুন।");
+      }
+    } catch (error) {
       setIsSubmitting(false);
-      setIsSubmitted(true);
-      setFullName("");
-      setEmail("");
-      setPhone("");
-      setProfileMessage("");
-    }, 1800);
+      alert(lang === "en" ? "Network error. Please try again." : "নেটওয়ার্ক সমস্যা। আবার চেষ্টা করুন।");
+    }
   };
 
   return (

@@ -6,3 +6,7 @@ coverage/
 *.log
 .env*
 !.env.example
+contacts.json
+data.json
+note.txt
+yarn.lock
