@@ -12,7 +12,10 @@ import loginHandler from './api/login.ts';
 import logoutHandler from './api/logout.ts';
 import meHandler from './api/me.ts';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// Handle __dirname properly for both ESM (dev) and CJS (prod/build)
+const currentDir = typeof __dirname !== 'undefined'
+  ? __dirname
+  : path.dirname(fileURLToPath(import.meta.url || 'file://' + process.cwd() + '/server.ts'));
 const isTest = process.env.VITEST;
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -41,7 +44,7 @@ async function createServer() {
     app.use(vite.middlewares);
   } else {
     // Production mode
-    app.use(express.static(path.resolve(__dirname, 'dist')));
+    app.use(express.static(path.resolve(currentDir, 'dist')));
   }
 
   app.use('*', async (req, res, next) => {
@@ -56,10 +59,10 @@ async function createServer() {
 
       if (!isProd && vite) {
         // Always read fresh index.html in dev
-        template = fs.readFileSync(path.resolve(__dirname, 'index.html'), 'utf-8');
+        template = fs.readFileSync(path.resolve(currentDir, 'index.html'), 'utf-8');
         template = await vite.transformIndexHtml(url, template);
       } else {
-        template = fs.readFileSync(path.resolve(__dirname, 'dist/index.html'), 'utf-8');
+        template = fs.readFileSync(path.resolve(currentDir, 'dist/index.html'), 'utf-8');
       }
 
       res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
