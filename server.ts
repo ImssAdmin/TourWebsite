@@ -16,6 +16,8 @@ import meHandler from './api/me.ts';
 const currentDir = typeof __dirname !== 'undefined'
   ? __dirname
   : path.dirname(fileURLToPath(import.meta.url || 'file://' + process.cwd() + '/server.ts'));
+const rootDir = currentDir.endsWith('dist') ? path.resolve(currentDir, '..') : currentDir;
+const distDir = path.resolve(rootDir, 'dist');
 const isTest = process.env.VITEST;
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -44,7 +46,7 @@ async function createServer() {
     app.use(vite.middlewares);
   } else {
     // Production mode
-    app.use(express.static(path.resolve(currentDir, 'dist')));
+    app.use(express.static(distDir));
   }
 
   app.use('*', async (req, res, next) => {
@@ -59,10 +61,10 @@ async function createServer() {
 
       if (!isProd && vite) {
         // Always read fresh index.html in dev
-        template = fs.readFileSync(path.resolve(currentDir, 'index.html'), 'utf-8');
+        template = fs.readFileSync(path.resolve(rootDir, 'index.html'), 'utf-8');
         template = await vite.transformIndexHtml(url, template);
       } else {
-        template = fs.readFileSync(path.resolve(currentDir, 'dist/index.html'), 'utf-8');
+        template = fs.readFileSync(path.resolve(distDir, 'index.html'), 'utf-8');
       }
 
       res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
