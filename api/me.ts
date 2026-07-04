@@ -1,4 +1,4 @@
-import { authenticate } from './_lib/auth';
+import { authenticate } from './_lib/auth.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {

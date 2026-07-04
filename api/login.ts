@@ -1,4 +1,4 @@
-import { users, SECRET_KEY } from './_lib/auth';
+import { users, SECRET_KEY } from './_lib/auth.js';
 import jwt from 'jsonwebtoken';
 
 export default async function handler(req, res) {

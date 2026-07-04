@@ -1,5 +1,5 @@
-import { authenticate, authorize } from './_lib/auth';
-import prisma from './_lib/prisma';
+import { authenticate, authorize } from './_lib/auth.js';
+import prisma from './_lib/prisma.js';
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
