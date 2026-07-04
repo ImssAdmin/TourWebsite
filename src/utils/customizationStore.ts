@@ -130,14 +130,14 @@ export interface CustomData {
   heroTitleHighlightBn: string;
   heroSubtitleEn: string;
   heroSubtitleBn: string;
-  
+
   aboutTitleEn: string;
   aboutTitleBn: string;
   aboutDesc1En: string;
   aboutDesc1Bn: string;
   aboutDesc2En: string;
   aboutDesc2Bn: string;
-  
+
   officeAddressEn: string;
   officeAddressBn: string;
   officePhoneEn: string;
@@ -156,7 +156,7 @@ export interface CustomData {
   homeTeamMembers: TeamMember[];
   successStories: CustomSuccessStory[];
   blogs: CustomBlog[];
-  
+
   statsProcessedEn: string;
   statsProcessedBn: string;
   statsRatioEn: string;
@@ -215,14 +215,14 @@ export const DEFAULT_CUSTOM_DATA: CustomData = {
   heroTitleHighlightBn: "আইডিয়াল স্কাই ট্যুরস",
   heroSubtitleEn: "We specialize in processing high-success rate Student Visas, Work Permits, Express Tourist Packages, and Business Setups. Officially registered and authorized in Dhaka, Bangladesh.",
   heroSubtitleBn: "আমরা সর্বোচ্চ ভিসা সাকসেস রেট সহ স্টুডেন্ট ভিসা, ওয়ার্ক পারমিট, ফাস্ট-ট্র্যাক ট্যুরিস্ট ভিসা এবং বিজনেস সেটআপ প্রসেস করে থাকি। ঢাকা, বাংলাদেশে আমাদের অফিসিয়াল কার্যালয়ে আপনাকে স্বাগতম।",
-  
+
   aboutTitleEn: "Pioneering Legal Global Mobility Since 2018",
   aboutTitleBn: "২০১৮ থেকে বৈধ ও আইনি উপায়ে গ্লোবাল মুভমেন্ট",
   aboutDesc1En: "Ideal Sky Tours is a premier visa consultancy based in Dhaka, Bangladesh. We are committed to turning your dreams of studying, working, conducting business, or travelling abroad into reality with unparalleled transparency and expert compliance legal standards.",
   aboutDesc1Bn: "আইডিয়াল স্কাই ট্যুরস ঢাকা, বাংলাদেশে অবস্থিত একটি প্রিমিয়াম ভিসা পরামর্শক প্রতিষ্ঠান। আমরা স্বচ্ছতা এবং অত্যন্ত কঠোর আইনি মানদণ্ড বজায় রেখে আপনার বিদেশে পড়াশোনা, কাজ, ব্যবসা বা ভ্রমণের স্বপ্ন পূরণ করতে অঙ্গীকারবদ্ধ।",
   aboutDesc2En: "We understand that international visa procedures can be overwhelming. That is why our team of licensed migration advisers works round-the-clock to coordinate directly with certified state departments and embassy portals to streamline your file processing.",
   aboutDesc2Bn: "আমরা জানি যে আন্তর্জাতিক ভিসা প্রক্রিয়াগুলি অত্যন্ত জটিল হতে পারে। এই কারণেই আমাদের লাইসেন্সপ্রাপ্ত মাইগ্রেশন উপদেষ্টাদের টিম সরাসরি নিবন্ধিত অ্যাম্বেসি পোর্টালগুলির সাথে সমন্বয় করে আপনার ফাইলের নির্ভুল প্রসেসিং নিশ্চিত করে।",
-  
+
   officeAddressEn: "Suite 402, Level 4, Concord Tower, Kazi Nazrul Islam Avenue, Shahbagh, Dhaka-1215, Bangladesh.",
   officeAddressBn: "স্যুট ৪০২, লেভে ৪, কনকর্ড টাওয়ার, কাজী নজরুল ইসলাম এভিনিউ, শাহবাগ, ঢাকা-১২১৫, বাংলাদেশ।",
   officePhoneEn: "+880 1712-345678, +880 2-9876543",
@@ -233,78 +233,78 @@ export const DEFAULT_CUSTOM_DATA: CustomData = {
   officeHoursBn: "শনিবার - বৃহস্পতিবার: সকাল ০৯:৩০ - রাত ০৭:০০ (শুক্রবার সাপ্তাহিক বন্ধ)",
 
   destinations: [
-    { 
-      flag: "🇬🇧", 
-      code: "GB", 
+    {
+      flag: "🇬🇧",
+      code: "GB",
       nameEn: "United Kingdom",
-      nameBn: "যুক্তরাজ্য", 
+      nameBn: "যুক্তরাজ্য",
       descEn: "No IELTS admissions, PGWP rights, master degrees.",
-      descBn: "আইএলটিএস ছাড়া সরাসরি উচ্চশিক্ষা ও মাস্টার্স ডিগ্রির সুযোগ।", 
-      image: "https://images.unsplash.com/photo-1513635269975-59663e0ca1ad?auto=format&fit=crop&w=600&q=80" 
+      descBn: "আইএলটিএস ছাড়া সরাসরি উচ্চশিক্ষা ও মাস্টার্স ডিগ্রির সুযোগ।",
+      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=600&q=80"
     },
-    { 
-      flag: "🇨🇦", 
-      code: "CA", 
+    {
+      flag: "🇨🇦",
+      code: "CA",
       nameEn: "Canada Pathways",
-      nameBn: "কানাডা পাথওয়ে", 
+      nameBn: "কানাডা পাথওয়ে",
       descEn: "Study permit admissions, certified DLIs, PGWP routes.",
-      descBn: "স্টাডি পারমিটের মাধ্যমে নির্ভরযোগ্য সেটেলমেন্ট ও পিজিডব্লিউপি।", 
-      image: "https://images.unsplash.com/photo-1517935706615-2717063c2225?auto=format&fit=crop&w=600&q=80" 
+      descBn: "স্টাডি পারমিটের মাধ্যমে নির্ভরযোগ্য সেটেলমেন্ট ও পিজিডব্লিউপি।",
+      image: "https://images.unsplash.com/photo-1517935706615-2717063c2225?auto=format&fit=crop&w=600&q=80"
     },
-    { 
-      flag: "🇪🇺", 
-      code: "EU", 
+    {
+      flag: "🇪🇺",
+      code: "EU",
       nameEn: "Romania & Poland",
-      nameBn: "রোমানিয়া ও পোল্যান্ড", 
+      nameBn: "রোমানিয়া ও পোল্যান্ড",
       descEn: "Labor permits, gastronomy and skilled trades legally.",
-      descBn: "বৈধ ওয়ার্ক পারমিট, গ্যাস্ট্রোনমি এবং অন্যান্য টেকনিক্যাল জব।", 
-      image: "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&w=600&q=80" 
+      descBn: "বৈধ ওয়ার্ক পারমিট, গ্যাস্ট্রোনমি এবং অন্যান্য টেকনিক্যাল জব।",
+      image: "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&w=600&q=80"
     },
-    { 
-      flag: "🇸🇦", 
-      code: "SA", 
+    {
+      flag: "🇸🇦",
+      code: "SA",
       nameEn: "Saudi & Gulf Permits",
-      nameBn: "সৌদি ও গালফ ভিসা", 
+      nameBn: "সৌদি ও গালফ ভিসা",
       descEn: "Express company visa approvals, healthcare professionals.",
-      descBn: "দ্রুততম সময়ে সরকারি ভিসা ও আকর্ষণীয় ক্যারিয়ার সুযোগ।", 
-      image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=600&q=80" 
+      descBn: "দ্রুততম সময়ে সরকারি ভিসা ও আকর্ষণীয় ক্যারিয়ার সুযোগ।",
+      image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=600&q=80"
     }
   ],
 
   // Default Home Slides
   homeVideoUrl: "https://www.youtube.com/embed/5D3vAt593YI", // Default visa guide or intro video
   homeCategories: [
-    { 
-      id: "student-visa", 
-      titleEn: "Student Visa", titleBn: "স্টুডেন্ট ভিসা", 
-      descEn: "Secure admissions and permits in UK, Canada, USA, and Europe.", 
-      descBn: "যুক্তরাজ্য, কানাডা, আমেরিকা এবং ইউরোপে পড়াশোনার সুবর্ণ সুযোগ!", 
-      num: "3200+", 
-      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=600&q=80" 
+    {
+      id: "student-visa",
+      titleEn: "Student Visa", titleBn: "স্টুডেন্ট ভিসা",
+      descEn: "Secure admissions and permits in UK, Canada, USA, and Europe.",
+      descBn: "যুক্তরাজ্য, কানাডা, আমেরিকা এবং ইউরোপে পড়াশোনার সুবর্ণ সুযোগ!",
+      num: "3200+",
+      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=600&q=80"
     },
-    { 
-      id: "visit-visa", 
-      titleEn: "Visit Visa", titleBn: "ভিসিট ভিসা", 
-      descEn: "Perfect family and individual holiday plans with solid documentation.", 
-      descBn: "সহজ ট্যুরিস্ট ভিসা ও আকর্ষণীয় ফ্যামিলি ট্রাভেল প্ল্যানিং সার্ভিস।", 
-      num: "5100+", 
-      image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=600&q=80" 
+    {
+      id: "visit-visa",
+      titleEn: "Visit Visa", titleBn: "ভিসিট ভিসা",
+      descEn: "Perfect family and individual holiday plans with solid documentation.",
+      descBn: "সহজ ট্যুরিস্ট ভিসা ও আকর্ষণীয় ফ্যামিলি ট্রাভেল প্ল্যানিং সার্ভিস।",
+      num: "5100+",
+      image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=600&q=80"
     },
-    { 
-      id: "work-permit", 
-      titleEn: "Work Permit", titleBn: "ওয়ার্ক পারমিট", 
-      descEn: "Join Romanian, Croatian, and Middle Eastern employment sectors legally.", 
-      descBn: "পোল্যান্ড ও রোমানিয়াসহ মিডল ইস্টে নিশ্চিত ও বৈধ সরকারি ওয়ার্ক পারমিট।", 
-      num: "2800+", 
-      image: "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&w=600&q=80" 
+    {
+      id: "work-permit",
+      titleEn: "Work Permit", titleBn: "ওয়ার্ক পারমিট",
+      descEn: "Join Romanian, Croatian, and Middle Eastern employment sectors legally.",
+      descBn: "পোল্যান্ড ও রোমানিয়াসহ মিডল ইস্টে নিশ্চিত ও বৈধ সরকারি ওয়ার্ক পারমিট।",
+      num: "2800+",
+      image: "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&w=600&q=80"
     },
-    { 
-      id: "business-visa", 
-      titleEn: "Business Visa", titleBn: "বিজনেস ভিসা", 
-      descEn: "Relocate your business, set up startups, or attend trade summits.", 
-      descBn: "বিদেশে নতুন কোম্পানি রেজিস্ট্রেশন, স্টার্টআপ এবং ইনভেস্টর গোল্ডেন ভিসা।", 
-      num: "1400+", 
-      image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80" 
+    {
+      id: "business-visa",
+      titleEn: "Business Visa", titleBn: "বিজনেস ভিসা",
+      descEn: "Relocate your business, set up startups, or attend trade summits.",
+      descBn: "বিদেশে নতুন কোম্পানি রেজিস্ট্রেশন, স্টার্টআপ এবং ইনভেস্টর গোল্ডেন ভিসা।",
+      num: "1400+",
+      image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80"
     }
   ],
   homeTeamMembers: [
@@ -335,7 +335,7 @@ export const DEFAULT_CUSTOM_DATA: CustomData = {
   ],
   homeSlides: [
     {
-      image: "https://images.unsplash.com/photo-1513635269975-59663e0ca1ad?auto=format&fit=crop&w=1600&q=80",
+      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1600&q=80",
       titleEn: "Secure Admissions & Student Visa for UK",
       titleBn: "কোন আইএলটিএস ছাড়াই ইউকে স্টুডেন্ট ভিসা",
       descEn: "Process with MOI option. Complete interview guidelines by certified counselors.",
@@ -445,7 +445,7 @@ export const DEFAULT_CUSTOM_DATA: CustomData = {
       nameEn: "United Kingdom",
       nameBn: "যুক্তরাজ্য (UK)",
       flag: "🇬🇧",
-      image: "https://images.unsplash.com/photo-1513635269975-59663e0ca1ad?auto=format&fit=crop&w=600&q=80",
+      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=600&q=80",
       taglineEn: "Post-Graduate Work Permit (PGWP) & Immediate Spouse Intake",
       taglineBn: "উচ্চ সাকসেস রেট এবং অবিলম্বে স্পাউস সহ আবেদনের চমৎকার সুযোগ",
       intakesEn: "Sept, Jan & May",
@@ -847,7 +847,7 @@ export function initCustomDataFromServer() {
 export function saveCustomData(data: CustomData): boolean {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    
+
     fetch("/api/data", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

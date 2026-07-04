@@ -1,192 +1,79 @@
-import express from "express";
-import path from "path";
-import fs from "fs";
-import jwt from "jsonwebtoken";
-import cookieParser from "cookie-parser";
-import { createServer as createViteServer } from "vite";
+import express from 'express';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import cookieParser from 'cookie-parser';
 
-const app = express();
-const PORT = 3000;
-const SECRET_KEY = "SUPER_SECRET_KEY_NEVER_HARDCODE"; // In real app use process.env.JWT_SECRET
+// Import API routes
+import contactHandler from './api/contact.ts';
+import contactsHandler from './api/contacts.ts';
+import dataHandler from './api/data.ts';
+import loginHandler from './api/login.ts';
+import logoutHandler from './api/logout.ts';
+import meHandler from './api/me.ts';
 
-app.use(express.json({ limit: "50mb" }));
-app.use(cookieParser());
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const isTest = process.env.VITEST;
+const isProd = process.env.NODE_ENV === 'production';
 
-// Role hierarchy and permissions
-const ROLE_PERMISSIONS = {
-  "Super Admin": ["read", "write", "delete", "manage_users"],
-  "Admin": ["read", "write", "delete"],
-  "Editor": ["read", "write"],
-  "Manager": ["read", "approve"],
-  "Viewer": ["read"]
-};
+async function createServer() {
+  const app = express();
 
-// Mock users database
-const users = [
-  { username: "superadmin", password: "password", role: "Super Admin" },
-  { username: "admin", password: "password", role: "Admin" },
-  { username: "editor", password: "password", role: "Editor" },
-  { username: "manager", password: "password", role: "Manager" },
-  { username: "viewer", password: "password", role: "Viewer" }
-];
+  app.use(express.json());
+  app.use(cookieParser());
 
-const DATA_FILE = path.join(process.cwd(), "data.json");
-const CONTACTS_FILE = path.join(process.cwd(), "contacts.json");
+  // Mount API Routes
+  app.all('/api/contact', contactHandler);
+  app.all('/api/contacts', contactsHandler);
+  app.all('/api/data', dataHandler);
+  app.all('/api/login', loginHandler);
+  app.all('/api/logout', logoutHandler);
+  app.all('/api/me', meHandler);
 
-// Middleware to authenticate JWT
-// @ts-ignore
-const authenticateJWT = (req, res, next) => {
-  const token = req.cookies.admin_token;
-  if (!token) return res.status(401).json({ error: "Unauthorized" });
-
-  // @ts-ignore
-  jwt.verify(token, SECRET_KEY, (err, user) => {
-    if (err) return res.status(403).json({ error: "Forbidden" });
-    // @ts-ignore
-    req.user = user;
-    next();
-  });
-};
-
-// @ts-ignore
-const authorizeRoles = (...roles) => {
-  // @ts-ignore
-  return (req, res, next) => {
-    // @ts-ignore
-    if (!req.user || !roles.includes(req.user.role)) {
-      // @ts-ignore
-      console.log(`User role ${req.user?.role} not in allowed: ${roles}`);
-      return res.status(403).json({ error: "Insufficient permissions" });
-    }
-    next();
-  };
-};
-
-// --- API ROUTES ---
-
-app.post("/api/login", (req, res) => {
-  const { username, password } = req.body;
-  const user = users.find(u => u.username === username && u.password === password);
-
-  if (!user) {
-    return res.status(401).json({ error: "Invalid credentials" });
-  }
-
-  console.log(`User ${username} logged in with role ${user.role}`);
-
-  const token = jwt.sign({ username: user.username, role: user.role }, SECRET_KEY, { expiresIn: '1h' });
-  res.cookie("admin_token", token, { httpOnly: true, secure: process.env.NODE_ENV === "production" });
-  res.json({ message: "Login successful", role: user.role });
-});
-
-app.post("/api/logout", (req, res) => {
-  res.clearCookie("admin_token");
-  res.json({ message: "Logged out" });
-});
-
-// @ts-ignore
-app.get("/api/me", authenticateJWT, (req, res) => {
-  // @ts-ignore
-  res.json({ user: req.user });
-});
-
-// Load custom data
-app.get("/api/data", (req, res) => {
-  try {
-    if (fs.existsSync(DATA_FILE)) {
-      const data = fs.readFileSync(DATA_FILE, "utf-8");
-      res.json(JSON.parse(data));
-    } else {
-      res.json({});
-    }
-  } catch (error) {
-    res.status(500).json({ error: "Failed to read data" });
-  }
-});
-
-// Save custom data - only accessible by roles with write access
-// @ts-ignore
-app.post("/api/data", authenticateJWT, authorizeRoles("Super Admin", "Admin", "Editor"), (req, res) => {
-  try {
-    // @ts-ignore
-    console.log(`Audit log: Data updated by ${req.user.username} (${req.user.role})`);
-    const data = req.body;
-    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
-    res.json({ message: "Data saved successfully" });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to save data" });
-  }
-});
-
-// Submit a new contact message
-app.post("/api/contact", (req, res) => {
-  try {
-    const newContact = {
-      id: Date.now().toString(),
-      ...req.body,
-      createdAt: new Date().toISOString()
-    };
-
-    let contacts = [];
-    if (fs.existsSync(CONTACTS_FILE)) {
-      contacts = JSON.parse(fs.readFileSync(CONTACTS_FILE, "utf-8"));
-    }
-
-    contacts.unshift(newContact); // Add to beginning
-    fs.writeFileSync(CONTACTS_FILE, JSON.stringify(contacts, null, 2));
-
-    res.json({ message: "Message submitted successfully", success: true });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to submit message", success: false });
-  }
-});
-
-// Read contact messages - accessible by roles with read access
-// @ts-ignore
-app.get("/api/contacts", authenticateJWT, authorizeRoles("Super Admin", "Admin", "Editor", "Manager"), (req, res) => {
-  try {
-    if (fs.existsSync(CONTACTS_FILE)) {
-      const data = fs.readFileSync(CONTACTS_FILE, "utf-8");
-      res.json(JSON.parse(data));
-    } else {
-      res.json([]);
-    }
-  } catch (error) {
-    res.status(500).json({ error: "Failed to read contacts" });
-  }
-});
-
-// Admin config endpoint (sensitive configuration hidden from public)
-// @ts-ignore
-app.get("/api/admin-config", authenticateJWT, authorizeRoles("Super Admin", "Admin"), (req, res) => {
-  res.json({
-    secretApiKey: process.env.SECRET_API_KEY || "fake-api-key-for-test",
-    serverLogs: ["System booted", "DB connected"],
-    // @ts-ignore
-    permissions: ROLE_PERMISSIONS[req.user.role]
-  });
-});
-
-async function startServer() {
-  if (process.env.NODE_ENV !== "production") {
-    // Vite middleware for development
-    const vite = await createViteServer({
+  let vite;
+  if (!isProd) {
+    // Development mode with Vite
+    const { createServer: createViteServer } = await import('vite');
+    vite = await createViteServer({
       server: { middlewareMode: true },
-      appType: "spa",
+      appType: 'custom'
     });
     app.use(vite.middlewares);
   } else {
-    // Static file serving for production
-    const distPath = path.join(process.cwd(), "dist");
-    app.use(express.static(distPath));
-    app.get("*", (req, res) => {
-      res.sendFile(path.join(distPath, "index.html"));
-    });
+    // Production mode
+    app.use(express.static(path.resolve(__dirname, 'dist')));
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://0.0.0.0:${PORT}`);
+  app.use('*', async (req, res, next) => {
+    // Skip API routes
+    if (req.originalUrl.startsWith('/api')) {
+      return res.status(404).json({ error: 'API route not found' });
+    }
+
+    try {
+      const url = req.originalUrl;
+      let template, render;
+
+      if (!isProd && vite) {
+        // Always read fresh index.html in dev
+        template = fs.readFileSync(path.resolve(__dirname, 'index.html'), 'utf-8');
+        template = await vite.transformIndexHtml(url, template);
+      } else {
+        template = fs.readFileSync(path.resolve(__dirname, 'dist/index.html'), 'utf-8');
+      }
+
+      res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
+    } catch (e) {
+      !isProd && vite?.ssrFixStacktrace(e);
+      console.log(e.stack);
+      res.status(500).end(e.stack);
+    }
+  });
+
+  const port = process.env.PORT || 5173;
+  app.listen(port, () => {
+    console.log(`Server started at http://localhost:${port}`);
   });
 }
 
-startServer();
+createServer();
