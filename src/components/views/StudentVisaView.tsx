@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { 
-  GraduationCap, BookOpen, Clock, Calendar, CheckSquare, 
+import {
+  GraduationCap, BookOpen, Clock, Calendar, CheckSquare,
   MapPin, DollarSign, Award, ChevronRight, X, PhoneCall
 } from "lucide-react";
 import { translations } from "../../utils/translations";
 import { loadCustomData } from "../../utils/customizationStore";
+import { useSEO, seoData } from "../../utils/useSEO";
 
 interface StudentVisaViewProps {
   lang: "en" | "bn";
@@ -14,6 +15,9 @@ interface StudentVisaViewProps {
 
 export default function StudentVisaView({ lang, onNavigate }: StudentVisaViewProps) {
   const t = translations[lang];
+
+  // SEO optimization
+  useSEO(seoData['student-visa']);
 
   // Load custom backend media and texts
   const [customData, setCustomData] = useState(() => loadCustomData());
@@ -50,12 +54,12 @@ export default function StudentVisaView({ lang, onNavigate }: StudentVisaViewPro
 
   return (
     <div className="bg-slate-50 text-slate-800 min-h-screen pb-20 font-sans">
-      
+
       {/* ================= EDITORIAL BANNER SECTION ================= */}
       <section className="bg-gradient-to-r from-blue-700 via-blue-800 to-slate-950 text-white py-16 relative">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-600/10 via-transparent to-transparent pointer-events-none"></div>
         <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             className="space-y-4"
@@ -64,7 +68,7 @@ export default function StudentVisaView({ lang, onNavigate }: StudentVisaViewPro
               <GraduationCap className="w-4 h-4" />
               <span>{lang === "en" ? "Academic Placement Division" : "স্টুডেন্ট অ্যাডমিশন শাখা"}</span>
             </div>
-            
+
             <h1 className="font-sans font-black text-3.5xl md:text-5xl text-white tracking-tight">
               {lang === "en" ? customData.studentTitleEn : customData.studentTitleBn}
             </h1>
@@ -77,10 +81,10 @@ export default function StudentVisaView({ lang, onNavigate }: StudentVisaViewPro
 
       {/* ================= MAIN DUAL-COLUMN GRID ================= */}
       <div className="max-w-7xl mx-auto px-6 mt-16 grid lg:grid-cols-3 gap-12">
-        
+
         {/* Left Side: Country listings & "Apply Now" triggers (Col span 2) */}
         <div className="lg:col-span-2 space-y-10">
-          
+
           <h2 className="text-xl font-black text-slate-900 border-b border-slate-200 pb-3 flex items-center gap-2">
             <BookOpen className="w-5.5 h-5.5 text-blue-600" />
             <span>{lang === "en" ? "Accredited University Destinations" : "অন্যতম শীর্ষ একাডেমিক গন্তব্যসমূহ"}</span>
@@ -88,17 +92,17 @@ export default function StudentVisaView({ lang, onNavigate }: StudentVisaViewPro
 
           <div className="space-y-8">
             {countriesData.map((country: any) => (
-              <div 
+              <div
                 key={country.id}
                 className="bg-white rounded-3xl border border-slate-200/80 overflow-hidden hover:border-blue-500/40 hover:shadow-lg transition-all duration-300 space-y-6 pb-6"
                 id={`country-block-${country.id}`}
               >
                 {/* Elegant Destination Image with Flag Overlay */}
                 <div className="relative h-44 md:h-52 w-full overflow-hidden bg-slate-100">
-                  <img 
-                    src={country.image} 
-                    alt={lang === "en" ? country.nameEn : country.nameBn} 
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" 
+                  <img
+                    src={country.image}
+                    alt={lang === "en" ? country.nameEn : country.nameBn}
+                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                     referrerPolicy="no-referrer"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent"></div>
@@ -121,71 +125,71 @@ export default function StudentVisaView({ lang, onNavigate }: StudentVisaViewPro
                     <p className="text-xs text-blue-600 font-bold leading-normal">{lang === "en" ? country.taglineEn : country.taglineBn}</p>
                   </div>
 
-                {/* Grid details (Intakes, Costs, IELTS) */}
-                <div className="grid sm:grid-cols-3 gap-5 text-xs">
-                  
-                  <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl space-y-1">
-                    <span className="text-[10px] text-slate-400 font-mono uppercase tracking-wider block">Intakes / সেমিস্টার:</span>
-                    <span className="font-bold text-slate-800">{lang === "en" ? country.intakesEn : country.intakesBn}</span>
+                  {/* Grid details (Intakes, Costs, IELTS) */}
+                  <div className="grid sm:grid-cols-3 gap-5 text-xs">
+
+                    <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl space-y-1">
+                      <span className="text-[10px] text-slate-400 font-mono uppercase tracking-wider block">Intakes / সেমিস্টার:</span>
+                      <span className="font-bold text-slate-800">{lang === "en" ? country.intakesEn : country.intakesBn}</span>
+                    </div>
+
+                    <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl space-y-1">
+                      <span className="text-[10px] text-slate-400 font-mono uppercase tracking-wider block">Tuition costs / টিউশন ফি:</span>
+                      <span className="font-bold text-blue-700">{lang === "en" ? country.costRangeEn : country.costRangeBn}</span>
+                    </div>
+
+                    <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl space-y-1">
+                      <span className="text-[10px] text-slate-400 font-mono uppercase tracking-wider block">Min IELTS requirement:</span>
+                      <span className="font-bold text-slate-800">{lang === "en" ? country.ieltsRequirementEn : country.ieltsRequirementBn}</span>
+                    </div>
+
                   </div>
 
-                  <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl space-y-1">
-                    <span className="text-[10px] text-slate-400 font-mono uppercase tracking-wider block">Tuition costs / টিউশন ফি:</span>
-                    <span className="font-bold text-blue-700">{lang === "en" ? country.costRangeEn : country.costRangeBn}</span>
+                  {/* Key Benefits */}
+                  <div className="space-y-2.5">
+                    <h4 className="text-xs font-bold text-slate-700 uppercase tracking-widest block">
+                      {lang === "en" ? "Post-Study & Settlement Benefits:" : "পড়াশোনা পরবর্তী সুযোগ-সুবিধা:"}
+                    </h4>
+                    <ul className="space-y-2">
+                      {(lang === "en" ? (country.incentivesEn || []) : (country.incentivesBn || [])).map((inc: string, i: number) => (
+                        <li key={i} className="flex gap-2.5 items-start text-[11.5px] text-slate-600">
+                          <CheckSquare className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+                          <span className="leading-normal font-light">{inc}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
 
-                  <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl space-y-1">
-                    <span className="text-[10px] text-slate-400 font-mono uppercase tracking-wider block">Min IELTS requirement:</span>
-                    <span className="font-bold text-slate-800">{lang === "en" ? country.ieltsRequirementEn : country.ieltsRequirementBn}</span>
+                  {/* Primary CTA and Free Assessment triggers */}
+                  <div className="pt-4 border-t border-slate-100 flex flex-wrap gap-4 items-center justify-between">
+                    <span className="text-[10.5px] font-mono text-slate-400">
+                      DHAKA EMBASSY APPOINTMENT REGISTERED
+                    </span>
+
+                    <button
+                      onClick={() => setSelectedCountry(lang === "en" ? country.nameEn : country.nameBn)}
+                      className="px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-widest rounded-lg shadow-md hover:-translate-y-0.5 transition-transform duration-200 cursor-pointer"
+                    >
+                      {t.student.applyNow}
+                    </button>
                   </div>
 
                 </div>
-
-                {/* Key Benefits */}
-                <div className="space-y-2.5">
-                  <h4 className="text-xs font-bold text-slate-700 uppercase tracking-widest block">
-                    {lang === "en" ? "Post-Study & Settlement Benefits:" : "পড়াশোনা পরবর্তী সুযোগ-সুবিধা:"}
-                  </h4>
-                  <ul className="space-y-2">
-                    {(lang === "en" ? (country.incentivesEn || []) : (country.incentivesBn || [])).map((inc: string, i: number) => (
-                      <li key={i} className="flex gap-2.5 items-start text-[11.5px] text-slate-600">
-                        <CheckSquare className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-                        <span className="leading-normal font-light">{inc}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Primary CTA and Free Assessment triggers */}
-                <div className="pt-4 border-t border-slate-100 flex flex-wrap gap-4 items-center justify-between">
-                  <span className="text-[10.5px] font-mono text-slate-400">
-                    DHAKA EMBASSY APPOINTMENT REGISTERED
-                  </span>
-                  
-                  <button
-                    onClick={() => setSelectedCountry(lang === "en" ? country.nameEn : country.nameBn)}
-                    className="px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-widest rounded-lg shadow-md hover:-translate-y-0.5 transition-transform duration-200 cursor-pointer"
-                  >
-                    {t.student.applyNow}
-                  </button>
-                </div>
-
               </div>
-            </div>
-          ))}
+            ))}
           </div>
 
         </div>
 
         {/* Right Side: Eligibility Checklist & General Application Process */}
         <div className="space-y-8">
-          
+
           {/* Section 1: Academic Checklist */}
           <div className="bg-white p-6 rounded-3xl border border-slate-205 border-slate-200 shadow-sm space-y-5">
             <h3 className="text-sm font-black text-slate-900 border-b border-slate-100 pb-3 uppercase tracking-wider">
               {t.student.entryRequirements}
             </h3>
-            
+
             <ul className="space-y-3 text-xs text-slate-600">
               {[
                 { title: lang === "en" ? "Transcripts & Certificates" : "শিক্ষাগত সনদপত্র এবং মার্কশিট", desc: lang === "en" ? "HSC, Bachelor or Masters certified mark sheets." : "এসএসসি/এইচএসসি ও অর্জিত ডিগ্রি সমূহের মূল কপি।" },
@@ -235,12 +239,12 @@ export default function StudentVisaView({ lang, onNavigate }: StudentVisaViewPro
               {lang === "en" ? "Need Immediate Evaluation?" : "জরুরি প্রোফাইল রিভিউ আবশ্যক?"}
             </h3>
             <p className="text-xs text-blue-105 font-light leading-relaxed">
-              {lang === "en" 
+              {lang === "en"
                 ? "Talk directly to our chief academic advisor regarding visa refusals, course selection, or gap-year approvals."
                 : "আপনার পূর্ববর্তী কোনো স্টাডি গ্যাপ বা রিজেকশনের সমস্যা থাকলে সরাসরি আমাদের অভিজ্ঞ টিমের পরামর্শ নিয়ে ফাইল সাজান।"}
             </p>
             <div className="pt-2">
-              <button 
+              <button
                 onClick={() => onNavigate("contact")}
                 className="w-full h-10 bg-white text-blue-800 hover:bg-slate-50 font-bold text-xs uppercase tracking-widest rounded-lg cursor-pointer transition-colors shadow-md"
               >
@@ -276,7 +280,7 @@ export default function StudentVisaView({ lang, onNavigate }: StudentVisaViewPro
         {selectedCountry && (
           <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
             {/* Backdrop filter */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -285,14 +289,14 @@ export default function StudentVisaView({ lang, onNavigate }: StudentVisaViewPro
             ></motion.div>
 
             {/* Modal Dialog container */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               className="bg-white rounded-3xl border border-slate-200 max-w-md w-full p-6 relative z-10 shadow-2xl space-y-5 text-slate-800"
               id="apply-modal-wrapper"
             >
-              <button 
+              <button
                 onClick={() => setSelectedCountry(null)}
                 className="absolute top-4 right-4 w-8 h-8 rounded-full border border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50"
               >
@@ -315,8 +319,8 @@ export default function StudentVisaView({ lang, onNavigate }: StudentVisaViewPro
                     <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block">
                       {t.contact.nameLabel}
                     </label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       required
                       placeholder={lang === "en" ? "e.g., Ahsan Habib" : "উদা: আহসান হাবীব"}
                       className="w-full h-10 px-3 bg-slate-50 border border-slate-200 focus:border-blue-500 rounded text-xs text-slate-800 transition-colors focus:outline-none"
@@ -330,8 +334,8 @@ export default function StudentVisaView({ lang, onNavigate }: StudentVisaViewPro
                     <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block">
                       {t.contact.phoneLabel}
                     </label>
-                    <input 
-                      type="tel" 
+                    <input
+                      type="tel"
                       required
                       placeholder="e.g., +880 1712-XXXXXX"
                       className="w-full h-10 px-3 bg-slate-50 border border-slate-200 focus:border-blue-500 rounded text-xs text-slate-800 transition-colors focus:outline-none"
@@ -367,7 +371,7 @@ export default function StudentVisaView({ lang, onNavigate }: StudentVisaViewPro
                   </div>
                 </form>
               ) : (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   className="p-4 bg-green-50 text-green-800 rounded-2xl border border-green-200 text-center space-y-3.5"

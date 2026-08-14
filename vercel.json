@@ -1,4 +1,10 @@
 {
+  "functions": {
+    "api/upload.ts": {
+      "maxDuration": 60,
+      "memory": 1024
+    }
+  },
   "rewrites": [
     {
       "source": "/api/(.*)",

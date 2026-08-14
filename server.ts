@@ -11,6 +11,8 @@ import dataHandler from './api/data.ts';
 import loginHandler from './api/login.ts';
 import logoutHandler from './api/logout.ts';
 import meHandler from './api/me.ts';
+import uploadHandler from './api/upload.ts';
+import deleteImageHandler from './api/delete-image.ts';
 
 // Handle __dirname properly for both ESM (dev) and CJS (prod/build)
 const currentDir = typeof __dirname !== 'undefined'
@@ -24,7 +26,8 @@ const isProd = process.env.NODE_ENV === 'production';
 async function createServer() {
   const app = express();
 
-  app.use(express.json());
+  app.use(express.json({ limit: '50mb' })); // Increased limit for image uploads
+  app.use(express.urlencoded({ limit: '50mb', extended: true }));
   app.use(cookieParser());
 
   // Mount API Routes
@@ -34,6 +37,8 @@ async function createServer() {
   app.all('/api/login', loginHandler);
   app.all('/api/logout', logoutHandler);
   app.all('/api/me', meHandler);
+  app.all('/api/upload', uploadHandler);
+  app.all('/api/delete-image', deleteImageHandler);
 
   let vite;
   if (!isProd) {

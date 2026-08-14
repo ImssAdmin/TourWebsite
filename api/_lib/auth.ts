@@ -12,6 +12,7 @@ export const ROLE_PERMISSIONS = {
 
 export const users = [
   { username: "superadmin", password: "password", role: "Super Admin" },
+  { username: "admin@gmail.com", password: "admin123", role: "Admin" },
   { username: "admin", password: "password", role: "Admin" },
   { username: "editor", password: "password", role: "Editor" },
   { username: "manager", password: "password", role: "Manager" },

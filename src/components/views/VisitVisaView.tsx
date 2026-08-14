@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { 
-  Globe, Compass, Clock, CheckCheck, HelpCircle, 
-  MapPin, CheckSquare, Sparkles, X, Award, ChevronRight 
+import {
+  Globe, Compass, Clock, CheckCheck, HelpCircle,
+  MapPin, CheckSquare, Sparkles, X, Award, ChevronRight
 } from "lucide-react";
 import { translations } from "../../utils/translations";
+import { useSEO, seoData } from "../../utils/useSEO";
 
 interface VisitVisaViewProps {
   lang: "en" | "bn";
@@ -13,6 +14,9 @@ interface VisitVisaViewProps {
 
 export default function VisitVisaView({ lang, onNavigate }: VisitVisaViewProps) {
   const t = translations[lang];
+
+  // SEO optimization
+  useSEO(seoData['visit-visa']);
 
   // Booking Modal State
   const [selectedDestination, setSelectedDestination] = useState<string | null>(null);
@@ -98,12 +102,12 @@ export default function VisitVisaView({ lang, onNavigate }: VisitVisaViewProps) 
 
   return (
     <div className="bg-slate-50 text-slate-800 min-h-screen pb-20 font-sans">
-      
+
       {/* ================= HERO EDITORIAL BANNER ================= */}
       <section className="bg-gradient-to-r from-blue-700 via-blue-800 to-slate-950 text-white py-16 relative">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-600/10 via-transparent to-transparent pointer-events-none"></div>
         <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             className="space-y-4"
@@ -112,7 +116,7 @@ export default function VisitVisaView({ lang, onNavigate }: VisitVisaViewProps) 
               <Compass className="w-4 h-4 text-blue-200" />
               <span>{lang === "en" ? "International Tourism Support" : "আন্তর্জাতিক ট্যুরিজম শাখা"}</span>
             </div>
-            
+
             <h1 className="font-sans font-black text-3.5xl md:text-5xl text-white tracking-tight">
               {t.visit.title}
             </h1>
@@ -125,10 +129,10 @@ export default function VisitVisaView({ lang, onNavigate }: VisitVisaViewProps) 
 
       {/* ================= MAIN STRIP DATA ================= */}
       <div className="max-w-7xl mx-auto px-6 mt-16 grid lg:grid-cols-3 gap-12">
-        
+
         {/* Left Grid: Tourism Destinations Sections */}
         <div className="lg:col-span-2 space-y-12">
-          
+
           <h2 className="text-xl font-black text-slate-900 border-b border-slate-205 border-slate-200 pb-3 flex items-center gap-2">
             <Globe className="w-5.5 h-5.5 text-blue-600" />
             <span>{t.visit.packagesTitle}</span>
@@ -136,21 +140,21 @@ export default function VisitVisaView({ lang, onNavigate }: VisitVisaViewProps) 
 
           <div className="grid sm:grid-cols-2 gap-6">
             {destinations.map((dest) => (
-              <div 
+              <div
                 key={dest.id}
                 className="bg-white rounded-3xl border border-slate-200 overflow-hidden flex flex-col justify-between hover:border-blue-500/45 hover:shadow-lg transition-all duration-300"
               >
                 <div>
                   {/* Elegant Image Cover with Flag & Details Overlay */}
                   <div className="relative h-40 w-full overflow-hidden bg-slate-100">
-                    <img 
+                    <img
                       src={dest.image}
                       alt={dest.name}
                       className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                       referrerPolicy="no-referrer"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent"></div>
-                    
+
                     {/* Top rating badge */}
                     <span className="absolute top-3 right-3 px-2.5 py-0.5 bg-amber-50 rounded text-amber-700 text-[10px] font-mono font-bold uppercase tracking-wider border border-amber-200 shadow-sm z-10">
                       {dest.rating}
@@ -220,7 +224,7 @@ export default function VisitVisaView({ lang, onNavigate }: VisitVisaViewProps) 
 
         {/* Right Grid: Documents Advisory panel & FAQs */}
         <div className="space-y-8">
-          
+
           {/* Section 1: Tourist Clearance Checklist */}
           <div className="bg-white p-6 rounded-3xl border border-slate-205 border-slate-200 shadow-sm space-y-5">
             <h3 className="text-sm font-black text-slate-900 border-b border-slate-100 pb-3 uppercase tracking-wider">
@@ -257,12 +261,12 @@ export default function VisitVisaView({ lang, onNavigate }: VisitVisaViewProps) 
               {lang === "en" ? "Need Tourist Flight Combos?" : "সহজ ফ্লাইট ও হোটেল কম্বো চাই?"}
             </h3>
             <p className="text-xs text-blue-105 font-light leading-relaxed">
-              {lang === "en" 
+              {lang === "en"
                 ? "Get total holiday ticketing packages with hotel booking vouchers from our certified travel agency desk."
                 : "ভ্রমণ ভিসার পাশাপাশি আমাদের আইএটিএ (IATA) সার্টিফাইড ট্রাভেল ডেস্ক থেকে সেরা ট্রাভেল ইন্স্যুরেন্স ও এয়ার টিকিট বুকিং সুবিধা পান।"}
             </p>
             <div className="pt-2">
-              <button 
+              <button
                 onClick={() => onNavigate("contact")}
                 className="w-full h-10 bg-white text-blue-800 hover:bg-slate-50 font-bold text-xs uppercase tracking-widest rounded-lg cursor-pointer transition-colors shadow-md"
               >
@@ -279,7 +283,7 @@ export default function VisitVisaView({ lang, onNavigate }: VisitVisaViewProps) 
       <AnimatePresence>
         {selectedDestination && (
           <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -287,14 +291,14 @@ export default function VisitVisaView({ lang, onNavigate }: VisitVisaViewProps) 
               className="absolute inset-0 bg-slate-900/45 backdrop-blur-xs"
             ></motion.div>
 
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               className="bg-white rounded-3xl border border-slate-200 max-w-md w-full p-6 relative z-10 shadow-2xl space-y-5 text-slate-800"
               id="visit-booking-modal"
             >
-              <button 
+              <button
                 onClick={() => setSelectedDestination(null)}
                 className="absolute top-4 right-4 w-8 h-8 rounded-full border border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50"
               >
@@ -317,8 +321,8 @@ export default function VisitVisaView({ lang, onNavigate }: VisitVisaViewProps) 
                     <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block">
                       {t.contact.nameLabel}
                     </label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       required
                       placeholder={lang === "en" ? "e.g., Kazi Ahsan" : "উদা: কাজী আহসান"}
                       className="w-full h-10 px-3 bg-slate-50 border border-slate-200 focus:border-blue-500 rounded text-xs text-slate-800 transition-colors focus:outline-none"
@@ -332,8 +336,8 @@ export default function VisitVisaView({ lang, onNavigate }: VisitVisaViewProps) 
                     <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block">
                       {t.contact.phoneLabel}
                     </label>
-                    <input 
-                      type="tel" 
+                    <input
+                      type="tel"
                       required
                       placeholder="e.g., +880 1712-XXXXXX"
                       className="w-full h-10 px-3 bg-slate-50 border border-slate-200 focus:border-blue-500 rounded text-xs text-slate-800 transition-colors focus:outline-none"
@@ -347,8 +351,8 @@ export default function VisitVisaView({ lang, onNavigate }: VisitVisaViewProps) 
                     <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block">
                       {lang === "en" ? "Approximate Travel Date:" : "সম্ভাব্য ভ্রমণের সময়:"}
                     </label>
-                    <input 
-                      type="date" 
+                    <input
+                      type="date"
                       required
                       className="w-full h-10 px-3 bg-slate-50 border border-slate-200 focus:border-blue-500 rounded text-xs text-slate-800 transition-colors focus:outline-none cursor-pointer"
                       value={travelDate}
@@ -366,7 +370,7 @@ export default function VisitVisaView({ lang, onNavigate }: VisitVisaViewProps) 
                   </div>
                 </form>
               ) : (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   className="p-4 bg-green-50 text-green-800 rounded-2xl border border-green-200 text-center space-y-3.5"

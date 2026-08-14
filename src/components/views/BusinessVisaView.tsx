@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { 
-  Building2, Award, Scale, HelpCircle, Layers, MapPin, CheckSquare, 
-  Share2, ChevronRight, X, Sparkles, MessageSquare, Briefcase 
+import {
+  Building2, Award, Scale, HelpCircle, Layers, MapPin, CheckSquare,
+  Share2, ChevronRight, X, Sparkles, MessageSquare, Briefcase
 } from "lucide-react";
 import { translations } from "../../utils/translations";
 import { loadCustomData } from "../../utils/customizationStore";
+import { useSEO, seoData } from "../../utils/useSEO";
 
 interface BusinessVisaViewProps {
   lang: "en" | "bn";
@@ -14,6 +15,9 @@ interface BusinessVisaViewProps {
 
 export default function BusinessVisaView({ lang, onNavigate }: BusinessVisaViewProps) {
   const t = translations[lang];
+
+  // SEO optimization
+  useSEO(seoData['business-visa']);
 
   // Load custom backend media and texts
   const [customData, setCustomData] = useState(() => loadCustomData());
@@ -49,12 +53,12 @@ export default function BusinessVisaView({ lang, onNavigate }: BusinessVisaViewP
 
   return (
     <div className="bg-slate-50 text-slate-800 min-h-screen pb-20 font-sans">
-      
+
       {/* ================= HERO EDITORIAL BANNER ================= */}
       <section className="bg-gradient-to-r from-blue-700 via-blue-800 to-slate-950 text-white py-16 relative">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-600/10 via-transparent to-transparent pointer-events-none"></div>
         <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             className="space-y-4"
@@ -63,7 +67,7 @@ export default function BusinessVisaView({ lang, onNavigate }: BusinessVisaViewP
               <Building2 className="w-4 h-4 text-blue-250 animate-pulse" />
               <span>{lang === "en" ? "Corporate & Angel Investment Division" : "কর্পোরেট ইনভেস্টর শাখা"}</span>
             </div>
-            
+
             <h1 className="font-sans font-black text-3.5xl md:text-5xl text-white tracking-tight">
               {lang === "en" ? customData.businessTitleEn : customData.businessTitleBn}
             </h1>
@@ -76,10 +80,10 @@ export default function BusinessVisaView({ lang, onNavigate }: BusinessVisaViewP
 
       {/* ================= MAIN DUAL-COLUMN GRID ================= */}
       <div className="max-w-7xl mx-auto px-6 mt-16 grid lg:grid-cols-3 gap-12">
-        
+
         {/* Left Side: Business Streams list */}
         <div className="lg:col-span-2 space-y-12">
-          
+
           <h2 className="text-xl font-black text-slate-900 border-b border-slate-205 border-slate-200 pb-3 flex items-center gap-2">
             <Layers className="w-5.5 h-5.5 text-blue-600" />
             <span>{t.business.destinationsTitle}</span>
@@ -87,25 +91,25 @@ export default function BusinessVisaView({ lang, onNavigate }: BusinessVisaViewP
 
           <div className="space-y-8">
             {programs.map((prog) => (
-              <div 
+              <div
                 key={prog.id}
                 className="bg-white rounded-3xl border border-slate-200 overflow-hidden hover:border-blue-500/40 hover:shadow-lg transition-all duration-300 space-y-6 pb-6"
                 id={`business-block-${prog.id}`}
               >
-                
+
                 {/* Elegant Location Image Cover with Flag Overlay */}
                 <div className="relative h-44 md:h-52 w-full overflow-hidden bg-slate-100">
-                  <img 
-                    src={prog.image} 
-                    alt={lang === "en" ? prog.nameEn : prog.nameBn} 
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" 
+                  <img
+                    src={prog.image}
+                    alt={lang === "en" ? prog.nameEn : prog.nameBn}
+                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                     referrerPolicy="no-referrer"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80";
                     }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent"></div>
-                  
+
                   <div className="absolute bottom-4 left-6 flex items-center gap-3 text-white">
                     <span className="text-3xl bg-white/10 backdrop-blur-sm rounded-xl p-1 shadow-md shrink-0 block border border-white/20 leading-none">{prog.flag}</span>
                     <div>
@@ -175,7 +179,7 @@ export default function BusinessVisaView({ lang, onNavigate }: BusinessVisaViewP
 
         {/* Right Side: Advisory checklist and company trust details */}
         <div className="space-y-8">
-          
+
           {/* Section 1: Business Advisory Checklist */}
           <div className="bg-white p-6 rounded-3xl border border-slate-205 border-slate-200 shadow-sm space-y-5">
             <h3 className="text-sm font-black text-slate-900 border-b border-slate-100 pb-3 uppercase tracking-wider">
@@ -211,7 +215,7 @@ export default function BusinessVisaView({ lang, onNavigate }: BusinessVisaViewP
               <Scale className="w-4.5 h-4.5 text-blue-600" />
               <span>{lang === "en" ? "Advisory Legality Guarantee" : "আইনি প্রতিরক্ষা নিশ্চয়তা"}</span>
             </h3>
-            
+
             <p className="text-xs text-slate-500 font-light leading-relaxed">
               {lang === "en"
                 ? "Ideal Sky Tours partners with supreme legal advocates in London, Toronto, and Schengen zones ensuring total fidelity and genuine application files."
@@ -246,7 +250,7 @@ export default function BusinessVisaView({ lang, onNavigate }: BusinessVisaViewP
       <AnimatePresence>
         {selectedMarket && (
           <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -254,14 +258,14 @@ export default function BusinessVisaView({ lang, onNavigate }: BusinessVisaViewP
               className="absolute inset-0 bg-slate-900/45 backdrop-blur-xs"
             ></motion.div>
 
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               className="bg-white rounded-3xl border border-slate-200 max-w-md w-full p-6 relative z-10 shadow-2xl space-y-5 text-slate-800"
               id="business-apply-modal"
             >
-              <button 
+              <button
                 onClick={() => setSelectedMarket(null)}
                 className="absolute top-4 right-4 w-8 h-8 rounded-full border border-slate-105 border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50"
               >
@@ -284,8 +288,8 @@ export default function BusinessVisaView({ lang, onNavigate }: BusinessVisaViewP
                     <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block">
                       {t.contact.nameLabel}
                     </label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       required
                       placeholder={lang === "en" ? "e.g., Ahsan Habib Chowdhury" : "উদা: আহসান হাবীব চৌধুরী"}
                       className="w-full h-10 px-3 bg-slate-50 border border-slate-200 focus:border-blue-500 rounded text-xs text-slate-800 transition-colors focus:outline-none"
@@ -299,8 +303,8 @@ export default function BusinessVisaView({ lang, onNavigate }: BusinessVisaViewP
                     <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block">
                       {t.contact.phoneLabel}
                     </label>
-                    <input 
-                      type="tel" 
+                    <input
+                      type="tel"
                       required
                       placeholder="e.g., +880 1712-XXXXXX"
                       className="w-full h-10 px-3 bg-slate-50 border border-slate-200 focus:border-blue-500 rounded text-xs text-slate-800 transition-colors focus:outline-none"
@@ -319,7 +323,7 @@ export default function BusinessVisaView({ lang, onNavigate }: BusinessVisaViewP
                   </div>
                 </form>
               ) : (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   className="p-4 bg-green-50 text-green-800 rounded-2xl border border-green-200 text-center space-y-3.5"

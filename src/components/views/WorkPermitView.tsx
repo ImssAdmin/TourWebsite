@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { 
-  Briefcase, Wrench, ShieldAlert, BadgeCheck, Users, 
+import {
+  Briefcase, Wrench, ShieldAlert, BadgeCheck, Users,
   Layers, MapPin, CheckSquare, Award, Clock, FileText, ChevronRight, X
 } from "lucide-react";
 import { translations } from "../../utils/translations";
 import { loadCustomData } from "../../utils/customizationStore";
+import { useSEO, seoData } from "../../utils/useSEO";
 
 interface WorkPermitViewProps {
   lang: "en" | "bn";
@@ -14,6 +15,9 @@ interface WorkPermitViewProps {
 
 export default function WorkPermitView({ lang, onNavigate }: WorkPermitViewProps) {
   const t = translations[lang];
+
+  // SEO optimization
+  useSEO(seoData['work-permit']);
 
   // Load custom backend media and texts
   const [customData, setCustomData] = useState(() => loadCustomData());
@@ -50,12 +54,12 @@ export default function WorkPermitView({ lang, onNavigate }: WorkPermitViewProps
 
   return (
     <div className="bg-slate-50 text-slate-800 min-h-screen pb-20 font-sans">
-      
+
       {/* ================= HERO EDITORIAL BANNER ================= */}
       <section className="bg-gradient-to-r from-blue-700 via-blue-800 to-slate-955 to-slate-950 text-white py-16 relative">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-600/10 via-transparent to-transparent pointer-events-none"></div>
         <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             className="space-y-4"
@@ -64,7 +68,7 @@ export default function WorkPermitView({ lang, onNavigate }: WorkPermitViewProps
               <Briefcase className="w-4 h-4 text-blue-250" />
               <span>{lang === "en" ? "Overseas Skilled Labor Division" : "ওভারসিজ ওয়ার্কার্স শাখা"}</span>
             </div>
-            
+
             <h1 className="font-sans font-black text-3.5xl md:text-5xl text-white tracking-tight">
               {lang === "en" ? customData.workTitleEn : customData.workTitleBn}
             </h1>
@@ -77,10 +81,10 @@ export default function WorkPermitView({ lang, onNavigate }: WorkPermitViewProps
 
       {/* ================= MAIN STRIP DATA ================= */}
       <div className="max-w-7xl mx-auto px-6 mt-16 grid lg:grid-cols-3 gap-12">
-        
+
         {/* Left Side: Opportunities List (Col span 2) */}
         <div className="lg:col-span-2 space-y-12">
-          
+
           <h2 className="text-xl font-black text-slate-900 border-b border-slate-205 border-slate-200 pb-3 flex items-center gap-2">
             <Layers className="w-5.5 h-5.5 text-blue-600" />
             <span>{lang === "en" ? "Current Employment Opportunities" : "চলতি নিয়োগ এবং দেশভিত্তিক ওয়ার্ক পারমিট"}</span>
@@ -88,25 +92,25 @@ export default function WorkPermitView({ lang, onNavigate }: WorkPermitViewProps
 
           <div className="space-y-8">
             {workOpportunities.map((opportunity) => (
-              <div 
+              <div
                 key={opportunity.id}
                 className="bg-white rounded-3xl border border-slate-200 overflow-hidden hover:border-blue-500/40 hover:shadow-lg transition-all duration-300 space-y-6 pb-6"
                 id={`work-block-${opportunity.id}`}
               >
-                
+
                 {/* Elegant Image Banner with Flag overlay and Success Rate */}
                 <div className="relative h-44 md:h-52 w-full overflow-hidden bg-slate-100">
-                  <img 
-                    src={opportunity.image} 
-                    alt={lang === "en" ? opportunity.countryEn : opportunity.countryBn} 
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" 
+                  <img
+                    src={opportunity.image}
+                    alt={lang === "en" ? opportunity.countryEn : opportunity.countryBn}
+                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                     referrerPolicy="no-referrer"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1583212292454-1fe6229603b7?auto=format&fit=crop&w=600&q=80";
                     }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent"></div>
-                  
+
                   {/* Success tag overlay */}
                   <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-750 border border-green-200 rounded-lg text-xs font-mono font-bold shadow-md z-10">
                     <span className="w-2 h-2 rounded-full bg-green-500 animate-ping"></span>
@@ -135,58 +139,58 @@ export default function WorkPermitView({ lang, onNavigate }: WorkPermitViewProps
                     </span>
                   </div>
 
-                {/* Info block (Salary and Accomm) */}
-                <div className="grid sm:grid-cols-2 gap-4 text-xs font-sans">
-                  <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl">
-                    <span className="text-[10px] text-slate-400 font-mono tracking-wider block uppercase">Average Salary / গড় মাসিক বেতন:</span>
-                    <strong className="text-blue-750 text-blue-700 text-sm">{lang === "en" ? opportunity.avgSalaryEn : opportunity.avgSalaryBn}</strong>
+                  {/* Info block (Salary and Accomm) */}
+                  <div className="grid sm:grid-cols-2 gap-4 text-xs font-sans">
+                    <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl">
+                      <span className="text-[10px] text-slate-400 font-mono tracking-wider block uppercase">Average Salary / গড় মাসিক বেতন:</span>
+                      <strong className="text-blue-750 text-blue-700 text-sm">{lang === "en" ? opportunity.avgSalaryEn : opportunity.avgSalaryBn}</strong>
+                    </div>
+                    <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl">
+                      <span className="text-[10px] text-slate-400 font-mono tracking-wider block uppercase">Accommodation / আবাসন:</span>
+                      <strong className="text-slate-800">{lang === "en" ? opportunity.accommodationEn : opportunity.accommodationBn}</strong>
+                    </div>
                   </div>
-                  <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl">
-                    <span className="text-[10px] text-slate-400 font-mono tracking-wider block uppercase">Accommodation / আবাসন:</span>
-                    <strong className="text-slate-800">{lang === "en" ? opportunity.accommodationEn : opportunity.accommodationBn}</strong>
+
+                  {/* Sub-trades available */}
+                  <div className="space-y-3">
+                    <span className="block text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                      {lang === "en" ? "Available Job Openings & Trades:" : "চলতি মেয়াদে এভেইলেবল শূন্য পদ সমূহের বিবরণ:"}
+                    </span>
+
+                    <div className="grid gap-2.5 sm:grid-cols-1">
+                      {((lang === "en" ? opportunity.tradesEn : opportunity.tradesBn) || []).map((trade: string, i: number) => (
+                        <div key={i} className="flex gap-2.5 items-center p-3 border border-slate-100 bg-slate-50/50 rounded-xl">
+                          <Wrench className="w-4 h-4 text-blue-600 shrink-0" />
+                          <span className="text-xs text-slate-700 font-bold leading-normal">{trade}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
 
-                {/* Sub-trades available */}
-                <div className="space-y-3">
-                  <span className="block text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                    {lang === "en" ? "Available Job Openings & Trades:" : "চলতি মেয়াদে এভেইলেবল শূন্য পদ সমূহের বিবরণ:"}
-                  </span>
-                  
-                  <div className="grid gap-2.5 sm:grid-cols-1">
-                    {((lang === "en" ? opportunity.tradesEn : opportunity.tradesBn) || []).map((trade: string, i: number) => (
-                      <div key={i} className="flex gap-2.5 items-center p-3 border border-slate-100 bg-slate-50/50 rounded-xl">
-                        <Wrench className="w-4 h-4 text-blue-600 shrink-0" />
-                        <span className="text-xs text-slate-700 font-bold leading-normal">{trade}</span>
-                      </div>
-                    ))}
+                  {/* Action CTA */}
+                  <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+                    <span className="text-[10px] font-mono text-slate-400">
+                      DHAKA REGISTERED LEGAL EMPLOYER SUBMISSION
+                    </span>
+
+                    <button
+                      onClick={() => setSelectedJob(lang === "en" ? opportunity.countryEn : opportunity.countryBn)}
+                      className="px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-widest rounded-lg shadow-md duration-200 cursor-pointer"
+                    >
+                      {lang === "en" ? "Apply for Permit" : "কাজের পারমিট আবেদন"}
+                    </button>
                   </div>
-                </div>
 
-                {/* Action CTA */}
-                <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-                  <span className="text-[10px] font-mono text-slate-400">
-                    DHAKA REGISTERED LEGAL EMPLOYER SUBMISSION
-                  </span>
-                  
-                  <button
-                    onClick={() => setSelectedJob(lang === "en" ? opportunity.countryEn : opportunity.countryBn)}
-                    className="px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-widest rounded-lg shadow-md duration-200 cursor-pointer"
-                  >
-                    {lang === "en" ? "Apply for Permit" : "কাজের পারমিট আবেদন"}
-                  </button>
                 </div>
-
               </div>
-            </div>
-          ))}
+            ))}
           </div>
 
         </div>
 
         {/* Right Side: Step process and requirements Checklist */}
         <div className="space-y-8">
-          
+
           {/* Section 1: Candidate general criteria */}
           <div className="bg-white p-6 rounded-3xl border border-slate-205 border-slate-200 shadow-sm space-y-5">
             <h3 className="text-sm font-black text-slate-900 border-b border-slate-100 pb-3 uppercase tracking-wider">
@@ -281,7 +285,7 @@ export default function WorkPermitView({ lang, onNavigate }: WorkPermitViewProps
       <AnimatePresence>
         {selectedJob && (
           <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -289,14 +293,14 @@ export default function WorkPermitView({ lang, onNavigate }: WorkPermitViewProps
               className="absolute inset-0 bg-slate-900/45 backdrop-blur-xs"
             ></motion.div>
 
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               className="bg-white rounded-3xl border border-slate-200 max-w-md w-full p-6 relative z-10 shadow-2xl space-y-5 text-slate-800"
               id="work-apply-modal"
             >
-              <button 
+              <button
                 onClick={() => setSelectedJob(null)}
                 className="absolute top-4 right-4 w-8 h-8 rounded-full border border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50"
               >
@@ -319,8 +323,8 @@ export default function WorkPermitView({ lang, onNavigate }: WorkPermitViewProps
                     <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block">
                       {t.contact.nameLabel}
                     </label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       required
                       placeholder={lang === "en" ? "e.g., Ahsanullah Kazi" : "উদা: আহসানুল্লাহ কাজী"}
                       className="w-full h-10 px-3 bg-slate-50 border border-slate-200 focus:border-blue-500 rounded text-xs text-slate-800 transition-colors focus:outline-none"
@@ -334,8 +338,8 @@ export default function WorkPermitView({ lang, onNavigate }: WorkPermitViewProps
                     <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block">
                       {t.contact.phoneLabel}
                     </label>
-                    <input 
-                      type="tel" 
+                    <input
+                      type="tel"
                       required
                       placeholder="e.g., +880 1712-XXXXXX"
                       className="w-full h-10 px-3 bg-slate-50 border border-slate-200 focus:border-blue-500 rounded text-xs text-slate-800 transition-colors focus:outline-none"
@@ -371,7 +375,7 @@ export default function WorkPermitView({ lang, onNavigate }: WorkPermitViewProps
                   </div>
                 </form>
               ) : (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   className="p-4 bg-green-50 text-green-800 rounded-2xl border border-green-200 text-center space-y-3.5"

@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { motion } from "motion/react";
-import { 
-  MapPin, Phone, Mail, Clock, ShieldCheck, 
+import Swal from "sweetalert2";
+import {
+  MapPin, Phone, Mail, Clock, ShieldCheck,
   Send, HelpCircle, CheckSquare, MessageSquare, Award
 } from "lucide-react";
 import { translations } from "../../utils/translations";
 import { loadCustomData } from "../../utils/customizationStore";
+import { useSEO, seoData } from "../../utils/useSEO";
 
 import { PageId } from "../../types";
 
@@ -16,6 +18,9 @@ interface ContactViewProps {
 
 export default function ContactView({ lang, onNavigate }: ContactViewProps) {
   const t = translations[lang];
+
+  // SEO optimization
+  useSEO(seoData.contact);
 
   // Load custom backend media and texts
   const [customData, setCustomData] = useState(() => loadCustomData());
@@ -42,7 +47,7 @@ export default function ContactView({ lang, onNavigate }: ContactViewProps) {
   const handleSubmitContactForm = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
@@ -50,39 +55,74 @@ export default function ContactView({ lang, onNavigate }: ContactViewProps) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          fullName,
-          email,
-          phone,
-          visaType,
-          profileMessage,
+          name: fullName,
+          email: email,
+          phone: phone,
+          service: visaType,
+          message: profileMessage,
         }),
       });
 
-      if (response.ok) {
+      const data = await response.json();
+
+      if (response.ok && data.success) {
         setIsSubmitting(false);
         setIsSubmitted(true);
         setFullName("");
         setEmail("");
         setPhone("");
         setProfileMessage("");
+
+        // Success alert with SweetAlert2
+        await Swal.fire({
+          title: lang === "en" ? "Success!" : "সফল!",
+          text: lang === "en"
+            ? "Your inquiry has been submitted successfully! Our team will contact you soon."
+            : "আপনার আবেদন সফলভাবে জমা হয়েছে! আমাদের টিম শীঘ্রই আপনার সাথে যোগাযোগ করবে।",
+          icon: "success",
+          confirmButtonText: lang === "en" ? "OK" : "ঠিক আছে",
+          confirmButtonColor: "#2563eb",
+          timer: 4000
+        });
       } else {
         setIsSubmitting(false);
-        alert(lang === "en" ? "Failed to submit. Please try again." : "দুঃখিত, আবার চেষ্টা করুন।");
+
+        // Error alert with SweetAlert2
+        await Swal.fire({
+          title: lang === "en" ? "Submission Failed" : "জমা ব্যর্থ",
+          text: lang === "en"
+            ? data.error || "Failed to submit. Please try again."
+            : data.error || "দুঃখিত, আবার চেষ্টা করুন।",
+          icon: "error",
+          confirmButtonText: lang === "en" ? "Try Again" : "আবার চেষ্টা করুন",
+          confirmButtonColor: "#dc2626"
+        });
       }
     } catch (error) {
       setIsSubmitting(false);
-      alert(lang === "en" ? "Network error. Please try again." : "নেটওয়ার্ক সমস্যা। আবার চেষ্টা করুন।");
+      console.error("Contact form error:", error);
+
+      // Network error alert with SweetAlert2
+      await Swal.fire({
+        title: lang === "en" ? "Network Error" : "নেটওয়ার্ক সমস্যা",
+        text: lang === "en"
+          ? "Unable to connect to the server. Please check your internet connection and try again."
+          : "সার্ভারের সাথে সংযোগ করতে ব্যর্থ। আপনার ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।",
+        icon: "error",
+        confirmButtonText: lang === "en" ? "OK" : "ঠিক আছে",
+        confirmButtonColor: "#dc2626"
+      });
     }
   };
 
   return (
     <div className="bg-slate-50 text-slate-800 min-h-screen pb-20 font-sans animate-fade-in">
-      
+
       {/* ================= EDITORIAL HERO HOVER ================= */}
       <section className="bg-gradient-to-r from-blue-700 via-blue-800 to-slate-950 text-white py-16 relative">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-600/10 via-transparent to-transparent pointer-events-none"></div>
         <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             className="space-y-4"
@@ -91,7 +131,7 @@ export default function ContactView({ lang, onNavigate }: ContactViewProps) {
               <MessageSquare className="w-4 h-4 text-blue-200" />
               <span>{lang === "en" ? "Direct Helpdesk Office" : "সরাসরি সহায়তা সেল"}</span>
             </div>
-            
+
             <h1 className="font-sans font-black text-3.5xl md:text-5xl text-white tracking-tight">
               {lang === "en" ? customData.contactTitleEn : customData.contactTitleBn}
             </h1>
@@ -104,10 +144,10 @@ export default function ContactView({ lang, onNavigate }: ContactViewProps) {
 
       {/* ================= MAIN DUAL-COLUMN GRID ================= */}
       <div className="max-w-7xl mx-auto px-6 mt-16 grid lg:grid-cols-12 gap-12 items-stretch">
-        
+
         {/* Left Side: Professional assessment form (Col span 7) */}
         <div className="lg:col-span-7 bg-white rounded-3xl border border-slate-200 p-6 md:p-8 hover:shadow-lg transition-all duration-300">
-          
+
           <div className="border-b border-slate-100 pb-4 mb-6">
             <h2 className="text-base sm:text-lg font-black text-slate-900 uppercase tracking-tight flex items-center gap-2">
               <ShieldCheck className="w-5.5 h-5.5 text-blue-600" />
@@ -117,7 +157,7 @@ export default function ContactView({ lang, onNavigate }: ContactViewProps) {
           </div>
 
           {isSubmitted ? (
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               className="p-8 bg-green-50 border border-green-200 text-green-900 rounded-2xl text-center space-y-4"
@@ -129,7 +169,7 @@ export default function ContactView({ lang, onNavigate }: ContactViewProps) {
               <p className="text-xs text-green-800 leading-relaxed font-light">
                 {t.common.successAlert}
               </p>
-              
+
               <div className="pt-2">
                 <button
                   onClick={() => setIsSubmitted(false)}
@@ -141,15 +181,15 @@ export default function ContactView({ lang, onNavigate }: ContactViewProps) {
             </motion.div>
           ) : (
             <form onSubmit={handleSubmitContactForm} className="space-y-5">
-              
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                
+
                 {/* Full name input */}
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
                     {t.contact.nameLabel} <span className="text-red-500">*</span>
                   </label>
-                  <input 
+                  <input
                     type="text"
                     required
                     placeholder={lang === "en" ? "e.g., Ahsanullah Fahim" : "উদা: আহসানুল্লাহ ফাহিম"}
@@ -164,7 +204,7 @@ export default function ContactView({ lang, onNavigate }: ContactViewProps) {
                   <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
                     {t.contact.emailLabel}
                   </label>
-                  <input 
+                  <input
                     type="email"
                     placeholder="e.g., info@gmail.com"
                     className="w-full h-11 px-3 bg-slate-50 border border-slate-200 focus:border-blue-500 rounded text-xs text-slate-800 focus:outline-none transition-colors"
@@ -178,7 +218,7 @@ export default function ContactView({ lang, onNavigate }: ContactViewProps) {
                   <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
                     {t.contact.phoneLabel} <span className="text-red-500">*</span>
                   </label>
-                  <input 
+                  <input
                     type="tel"
                     required
                     placeholder="e.g., +880 1712-XXXXXX"
@@ -212,10 +252,10 @@ export default function ContactView({ lang, onNavigate }: ContactViewProps) {
                 <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
                   {t.contact.messageLabel}
                 </label>
-                <textarea 
+                <textarea
                   rows={4}
-                  placeholder={lang === "en" 
-                    ? "Explain gap year history, education level, IELTS score bounds or work skills..." 
+                  placeholder={lang === "en"
+                    ? "Explain gap year history, education level, IELTS score bounds or work skills..."
                     : "আপনার পড়াশোনা বা সর্বশেষ জিপিএ, আইএলটিএস স্কোর বা কাজের দক্ষতা সংক্ষেপে উল্লেখ করুন..."}
                   className="w-full p-3.5 bg-slate-50 border border-slate-200 focus:border-blue-500 rounded text-xs text-slate-800 focus:outline-none transition-colors resize-y leading-relaxed font-light"
                   value={profileMessage}
@@ -241,10 +281,10 @@ export default function ContactView({ lang, onNavigate }: ContactViewProps) {
 
         {/* Right Side: Office address details (Col span 5) */}
         <div className="lg:col-span-5 space-y-8 flex flex-col justify-between">
-          
+
           {/* Office Credentials block */}
           <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-6 flex-1 flex flex-col justify-center">
-            
+
             <h3 className="text-sm font-black text-slate-900 border-b border-slate-100 pb-3 uppercase tracking-wider flex items-center gap-2">
               <Award className="w-4.5 h-4.5 text-blue-600" />
               <span>{t.contact.officeTitle}</span>
@@ -298,8 +338,8 @@ export default function ContactView({ lang, onNavigate }: ContactViewProps) {
             <div className="font-light">
               <strong className="text-slate-900 font-bold block uppercase tracking-wide">Government Compliant Counsel</strong>
               <p className="text-[11px] leading-relaxed mt-0.5">
-                {lang === "en" 
-                  ? "Ideal Sky Tours holds fully accredited registration certificates enabling direct consular linkages." 
+                {lang === "en"
+                  ? "Ideal Sky Tours holds fully accredited registration certificates enabling direct consular linkages."
                   : "আইডিয়াল স্কাই ট্যুরস বাংলাদেশ সরকারের প্রয়োজনীয় ট্রেড লাইসেন্স ও আইনি ট্রাস্টের সাথে সরাসরি নিবন্ধিত।"}
               </p>
             </div>
@@ -316,16 +356,16 @@ export default function ContactView({ lang, onNavigate }: ContactViewProps) {
             <span>OFFICIAL DHAKA SHAHBAGH OFFICE GEO-LOCATION</span>
             <span>GOOGLE MAPS PORTAL GROUNDING</span>
           </div>
-          
+
           <div className="relative rounded-2xl overflow-hidden aspect-video max-h-[360px] border border-slate-100 shadow-inner bg-slate-100">
             {/* Authentic Embedded Google Map Centered around Shahbagh Kazi Nazrul Islam Avenue */}
-            <iframe 
-              src={customData.contactMapEmbedUrl} 
-              width="100%" 
-              height="100%" 
-              style={{ border: 0 }} 
-              allowFullScreen={true} 
-              loading="lazy" 
+            <iframe
+              src={customData.contactMapEmbedUrl}
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen={true}
+              loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
               title="Ideal Sky Tours Shahbagh Branch Location Concord Tower"
               className="absolute inset-0 w-full h-full"

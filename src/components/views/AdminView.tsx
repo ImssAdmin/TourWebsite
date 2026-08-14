@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import Swal from "sweetalert2";
 import {
-  Lock, KeyRound, Save, RefreshCw, LayoutGrid, Sparkles, Building, CheckCircle2, AlertTriangle, Eye, ArrowLeft, GraduationCap, Briefcase, LineChart, Plane, MessageSquare, Calendar, User, Mail, Phone
+  Lock, KeyRound, Save, RefreshCw, LayoutGrid, Sparkles, Building, CheckCircle2, AlertTriangle, Eye, ArrowLeft, GraduationCap, Briefcase, LineChart, Plane, MessageSquare, Calendar, User, Mail, Phone, Upload, Loader
 } from "lucide-react";
+import { useSEO, seoData } from "../../utils/useSEO";
 import {
   loadCustomData,
   saveCustomData,
@@ -26,6 +28,9 @@ interface AdminViewProps {
 }
 
 export default function AdminView({ lang, onNavigate }: AdminViewProps) {
+  // SEO optimization
+  useSEO(seoData.admin);
+
   // Login State
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState("");
@@ -37,6 +42,9 @@ export default function AdminView({ lang, onNavigate }: AdminViewProps) {
   const [customData, setCustomData] = useState<CustomData>(loadCustomData());
   const [activeTab, setActiveTab] = useState<"destinations" | "hero" | "office" | "student" | "work" | "business" | "visit" | "config" | "contacts">("destinations");
   const [notification, setNotification] = useState<{ type: "success" | "error"; msg: string } | null>(null);
+
+  // Upload State
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   // Contacts State
   const [contacts, setContacts] = useState<any[]>([]);
@@ -104,6 +112,32 @@ export default function AdminView({ lang, onNavigate }: AdminViewProps) {
     }, 4000);
   };
 
+  // SweetAlert helper for better alerts
+  const showAlert = async (type: "success" | "error" | "warning", title: string, message: string) => {
+    await Swal.fire({
+      title: title,
+      text: message,
+      icon: type,
+      confirmButtonText: lang === "en" ? "OK" : "ঠিক আছে",
+      confirmButtonColor: type === "error" ? "#dc2626" : "#2563eb",
+      timer: type === "success" ? 3000 : undefined
+    });
+  };
+
+  const showConfirm = async (title: string, message: string): Promise<boolean> => {
+    const result = await Swal.fire({
+      title: title,
+      text: message,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#dc2626",
+      cancelButtonColor: "#64748b",
+      confirmButtonText: lang === "en" ? "Yes, proceed!" : "হ্যাঁ, এগিয়ে যান!",
+      cancelButtonText: lang === "en" ? "Cancel" : "বাতিল"
+    });
+    return result.isConfirmed;
+  };
+
   // State update handlers
   const handleBaseChange = (key: keyof Omit<CustomData, "destinations" | "studentCountries" | "workOpportunities" | "businessPrograms" | "visitDestinations" | "homeSlides" | "successStories" | "blogs">, val: string) => {
     setCustomData(prev => ({
@@ -161,13 +195,21 @@ export default function AdminView({ lang, onNavigate }: AdminViewProps) {
     }));
   };
 
-  const handleDeleteHomeCategory = (index: number) => {
+  const handleDeleteHomeCategory = async (index: number) => {
+    const confirmed = await showConfirm(
+      lang === "en" ? "Delete Category?" : "ক্যাটাগরি মুছবেন?",
+      lang === "en" ? "Are you sure you want to delete this category?" : "আপনি কি এই ক্যাটাগরি মুছে ফেলতে চান?"
+    );
+    if (!confirmed) return;
+
     const updated = [...(customData.homeCategories || [])];
     updated.splice(index, 1);
     setCustomData(prev => ({
       ...prev,
       homeCategories: updated
     }));
+
+    await showAlert("success", lang === "en" ? "Deleted!" : "মুছে ফেলা হয়েছে!", lang === "en" ? "Category deleted successfully." : "ক্যাটাগরি সফলভাবে মুছে ফেলা হয়েছে।");
   };
 
   const handleTeamMemberChange = (index: number, key: keyof TeamMember, val: string) => {
@@ -239,13 +281,21 @@ export default function AdminView({ lang, onNavigate }: AdminViewProps) {
     }));
   };
 
-  const handleDeleteDestination = (index: number) => {
+  const handleDeleteDestination = async (index: number) => {
+    const confirmed = await showConfirm(
+      lang === "en" ? "Delete Destination?" : "গন্তব্য মুছবেন?",
+      lang === "en" ? "Are you sure you want to delete this destination?" : "আপনি কি এই গন্তব্য মুছে ফেলতে চান?"
+    );
+    if (!confirmed) return;
+
     const updatedDestinations = [...customData.destinations];
     updatedDestinations.splice(index, 1);
     setCustomData(prev => ({
       ...prev,
       destinations: updatedDestinations
     }));
+
+    await showAlert("success", lang === "en" ? "Deleted!" : "মুছে ফেলা হয়েছে!", lang === "en" ? "Destination deleted successfully." : "গন্তব্য সফলভাবে মুছে ফেলা হয়েছে।");
   };
 
   const handleStudentCountryChange = (index: number, key: keyof StudentCountry, val: string | string[]) => {
@@ -270,13 +320,21 @@ export default function AdminView({ lang, onNavigate }: AdminViewProps) {
     }));
   };
 
-  const handleDeleteStudentCountry = (index: number) => {
+  const handleDeleteStudentCountry = async (index: number) => {
+    const confirmed = await showConfirm(
+      lang === "en" ? "Delete Country?" : "দেশ মুছবেন?",
+      lang === "en" ? "Are you sure you want to delete this country?" : "আপনি কি এই দেশ মুছে ফেলতে চান?"
+    );
+    if (!confirmed) return;
+
     const updatedCountries = [...(customData.studentCountries || [])];
     updatedCountries.splice(index, 1);
     setCustomData(prev => ({
       ...prev,
       studentCountries: updatedCountries
     }));
+
+    await showAlert("success", lang === "en" ? "Deleted!" : "মুছে ফেলা হয়েছে!", lang === "en" ? "Country deleted successfully." : "দেশ সফলভাবে মুছে ফেলা হয়েছে।");
   };
 
   const handleAddWorkOpportunity = () => {
@@ -289,13 +347,21 @@ export default function AdminView({ lang, onNavigate }: AdminViewProps) {
     }));
   };
 
-  const handleDeleteWorkOpportunity = (index: number) => {
+  const handleDeleteWorkOpportunity = async (index: number) => {
+    const confirmed = await showConfirm(
+      lang === "en" ? "Delete Opportunity?" : "সুযোগ মুছবেন?",
+      lang === "en" ? "Are you sure you want to delete this work opportunity?" : "আপনি কি এই কাজের সুযোগ মুছে ফেলতে চান?"
+    );
+    if (!confirmed) return;
+
     const updatedOpp = [...(customData.workOpportunities || [])];
     updatedOpp.splice(index, 1);
     setCustomData(prev => ({
       ...prev,
       workOpportunities: updatedOpp
     }));
+
+    await showAlert("success", lang === "en" ? "Deleted!" : "মুছে ফেলা হয়েছে!", lang === "en" ? "Work opportunity deleted successfully." : "কাজের সুযোগ সফলভাবে মুছে ফেলা হয়েছে।");
   };
 
   const handleWorkOpportunityChange = (index: number, key: keyof WorkOpportunity, val: string | string[]) => {
@@ -320,13 +386,21 @@ export default function AdminView({ lang, onNavigate }: AdminViewProps) {
     }));
   };
 
-  const handleDeleteBusinessProgram = (index: number) => {
+  const handleDeleteBusinessProgram = async (index: number) => {
+    const confirmed = await showConfirm(
+      lang === "en" ? "Delete Program?" : "প্রোগ্রাম মুছবেন?",
+      lang === "en" ? "Are you sure you want to delete this business program?" : "আপনি কি এই বিজনেস প্রোগ্রাম মুছে ফেলতে চান?"
+    );
+    if (!confirmed) return;
+
     const updatedPrograms = [...(customData.businessPrograms || [])];
     updatedPrograms.splice(index, 1);
     setCustomData(prev => ({
       ...prev,
       businessPrograms: updatedPrograms
     }));
+
+    await showAlert("success", lang === "en" ? "Deleted!" : "মুছে ফেলা হয়েছে!", lang === "en" ? "Business program deleted successfully." : "বিজনেস প্রোগ্রাম সফলভাবে মুছে ফেলা হয়েছে।");
   };
 
   const handleBusinessProgramChange = (index: number, key: keyof BusinessProgram, val: string | string[]) => {
@@ -341,32 +415,110 @@ export default function AdminView({ lang, onNavigate }: AdminViewProps) {
     }));
   };
 
-  const compressImage = (file: File, callback: (base64: string) => void) => {
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      if (event.target?.result) {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement("canvas");
-          let { width, height } = img;
-          const MAX_DIM = 800; // limit size for localStorage
-          if (width > height && width > MAX_DIM) {
-            height *= MAX_DIM / width;
-            width = MAX_DIM;
-          } else if (height > MAX_DIM) {
-            width *= MAX_DIM / height;
-            height = MAX_DIM;
-          }
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext("2d");
-          ctx?.drawImage(img, 0, 0, width, height);
-          callback(canvas.toDataURL("image/jpeg", 0.7));
-        };
-        img.src = event.target.result as string;
+  const uploadToSupabase = async (file: File): Promise<string> => {
+    // Show uploading toast
+    Swal.fire({
+      title: lang === "en" ? "Uploading..." : "আপলোড হচ্ছে...",
+      text: lang === "en" ? "Please wait while we upload your image" : "আপনার ছবি আপলোড হচ্ছে, অপেক্ষা করুন",
+      icon: "info",
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
       }
-    };
-    reader.readAsDataURL(file);
+    });
+
+    try {
+      // Compress and convert to base64
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(new Error("Failed to read file"));
+        reader.onload = (event) => {
+          if (event.target?.result) {
+            const img = new Image();
+            img.onerror = () => reject(new Error("Failed to load image"));
+            img.onload = () => {
+              try {
+                const canvas = document.createElement("canvas");
+                let { width, height } = img;
+                const MAX_DIM = 1200; // Higher quality for Supabase storage
+
+                if (width > height && width > MAX_DIM) {
+                  height *= MAX_DIM / width;
+                  width = MAX_DIM;
+                } else if (height > MAX_DIM) {
+                  width *= MAX_DIM / height;
+                  height = MAX_DIM;
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext("2d");
+                if (!ctx) {
+                  reject(new Error("Failed to get canvas context"));
+                  return;
+                }
+                ctx.drawImage(img, 0, 0, width, height);
+                resolve(canvas.toDataURL("image/jpeg", 0.85)); // Better quality
+              } catch (err) {
+                reject(err);
+              }
+            };
+            img.src = event.target.result as string;
+          } else {
+            reject(new Error("No result from file reader"));
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+
+      // Upload to Supabase via API
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          image: base64,
+          fileName: file.name
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Upload failed');
+      }
+
+      // Success alert
+      await Swal.fire({
+        title: lang === "en" ? "Success!" : "সফল!",
+        text: lang === "en"
+          ? "Image uploaded successfully to cloud storage!"
+          : "ছবি সফলভাবে ক্লাউড স্টোরেজে আপলোড হয়েছে!",
+        icon: "success",
+        confirmButtonText: lang === "en" ? "OK" : "ঠিক আছে",
+        confirmButtonColor: "#2563eb",
+        timer: 3000
+      });
+
+      return data.url;
+    } catch (error) {
+      console.error('Upload error:', error);
+
+      // Error alert
+      await Swal.fire({
+        title: lang === "en" ? "Upload Failed" : "আপলোড ব্যর্থ",
+        text: lang === "en"
+          ? `Failed to upload image: ${error instanceof Error ? error.message : "Unknown error"}`
+          : `ছবি আপলোড ব্যর্থ হয়েছে: ${error instanceof Error ? error.message : "অজানা সমস্যা"}`,
+        icon: "error",
+        confirmButtonText: lang === "en" ? "Try Again" : "আবার চেষ্টা করুন",
+        confirmButtonColor: "#dc2626"
+      });
+
+      throw error;
+    }
   };
 
   const handleSave = () => {
@@ -650,12 +802,15 @@ export default function AdminView({ lang, onNavigate }: AdminViewProps) {
                                   type="file"
                                   accept="image/*"
                                   className="hidden"
-                                  onChange={(e) => {
+                                  onChange={async (e) => {
                                     const file = e.target.files?.[0];
                                     if (file) {
-                                      compressImage(file, (base64) => {
-                                        handleDestinationChange(idx, "image", base64);
-                                      });
+                                      try {
+                                        const url = await uploadToSupabase(file);
+                                        handleDestinationChange(idx, "image", url);
+                                      } catch (error) {
+                                        console.error('Upload failed:', error);
+                                      }
                                     }
                                   }}
                                 />
@@ -998,12 +1153,15 @@ export default function AdminView({ lang, onNavigate }: AdminViewProps) {
                               <input value={slide.image} onChange={e => handleHomeSlideChange(idx, "image", e.target.value)} className="w-full text-xs px-2 py-1.5 rounded bg-white border border-slate-200" placeholder="Image URL..." />
                               <label className="cursor-pointer bg-slate-100 border border-slate-200 text-slate-700 font-bold px-2 py-1.5 rounded text-[10px] flex items-center justify-center hover:bg-slate-200 transition-colors w-full">
                                 <span>{lang === "en" ? "Upload Photo" : "ছবি আপলোড"}</span>
-                                <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                                <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
                                   const file = e.target.files?.[0];
                                   if (file) {
-                                    compressImage(file, (base64) => {
-                                      handleHomeSlideChange(idx, "image", base64);
-                                    });
+                                    try {
+                                      const url = await uploadToSupabase(file);
+                                      handleHomeSlideChange(idx, "image", url);
+                                    } catch (error) {
+                                      console.error('Upload failed:', error);
+                                    }
                                   }
                                 }} />
                               </label>
@@ -1069,12 +1227,15 @@ export default function AdminView({ lang, onNavigate }: AdminViewProps) {
                               <input value={cat.image} onChange={e => handleHomeCategoryChange(idx, "image", e.target.value)} className="w-full text-xs px-2 py-1.5 rounded bg-white border border-slate-200" placeholder="Image URL..." />
                               <label className="cursor-pointer bg-slate-100 border border-slate-200 text-slate-700 font-bold px-2 py-1.5 rounded text-[10px] flex items-center justify-center hover:bg-slate-200 transition-colors w-full">
                                 <span>{lang === "en" ? "Upload Photo" : "ছবি আপলোড"}</span>
-                                <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                                <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
                                   const file = e.target.files?.[0];
                                   if (file) {
-                                    compressImage(file, (base64) => {
-                                      handleHomeCategoryChange(idx, "image", base64);
-                                    });
+                                    try {
+                                      const url = await uploadToSupabase(file);
+                                      handleHomeCategoryChange(idx, "image", url);
+                                    } catch (error) {
+                                      console.error('Upload failed:', error);
+                                    }
                                   }
                                 }} />
                               </label>
@@ -1142,12 +1303,15 @@ export default function AdminView({ lang, onNavigate }: AdminViewProps) {
                               <input value={member.image} onChange={e => handleTeamMemberChange(idx, "image", e.target.value)} className="w-full text-xs px-2 py-1.5 rounded bg-white border border-slate-200" placeholder="Image URL..." />
                               <label className="cursor-pointer bg-slate-100 border border-slate-200 text-slate-700 font-bold px-2 py-1.5 rounded text-[10px] flex items-center justify-center hover:bg-slate-200 transition-colors w-full">
                                 <span>{lang === "en" ? "Upload Photo" : "ছবি আপলোড"}</span>
-                                <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                                <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
                                   const file = e.target.files?.[0];
                                   if (file) {
-                                    compressImage(file, (base64) => {
-                                      handleTeamMemberChange(idx, "image", base64);
-                                    });
+                                    try {
+                                      const url = await uploadToSupabase(file);
+                                      handleTeamMemberChange(idx, "image", url);
+                                    } catch (error) {
+                                      console.error('Upload failed:', error);
+                                    }
                                   }
                                 }} />
                               </label>
@@ -1206,12 +1370,15 @@ export default function AdminView({ lang, onNavigate }: AdminViewProps) {
                               <input value={story.image} onChange={e => handleSuccessStoryChange(idx, "image", e.target.value)} className="w-full text-xs px-2 py-1.5 rounded bg-white border border-slate-200" placeholder="URL..." />
                               <label className="cursor-pointer bg-slate-100 border border-slate-200 text-slate-700 font-bold px-2 py-1.5 rounded text-[10px] flex items-center justify-center hover:bg-slate-200 transition-colors w-full">
                                 <span>{lang === "en" ? "Upload" : "আপলোড"}</span>
-                                <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                                <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
                                   const file = e.target.files?.[0];
                                   if (file) {
-                                    compressImage(file, (base64) => {
-                                      handleSuccessStoryChange(idx, "image", base64);
-                                    });
+                                    try {
+                                      const url = await uploadToSupabase(file);
+                                      handleSuccessStoryChange(idx, "image", url);
+                                    } catch (error) {
+                                      console.error('Upload failed:', error);
+                                    }
                                   }
                                 }} />
                               </label>
@@ -1527,12 +1694,15 @@ export default function AdminView({ lang, onNavigate }: AdminViewProps) {
                                   type="file"
                                   accept="image/*"
                                   className="hidden"
-                                  onChange={(e) => {
+                                  onChange={async (e) => {
                                     const file = e.target.files?.[0];
                                     if (file) {
-                                      compressImage(file, (base64) => {
-                                        handleStudentCountryChange(idx, "image", base64);
-                                      });
+                                      try {
+                                        const url = await uploadToSupabase(file);
+                                        handleStudentCountryChange(idx, "image", url);
+                                      } catch (error) {
+                                        console.error('Upload failed:', error);
+                                      }
                                     }
                                   }}
                                 />
@@ -1732,12 +1902,15 @@ export default function AdminView({ lang, onNavigate }: AdminViewProps) {
                                   type="file"
                                   accept="image/*"
                                   className="hidden"
-                                  onChange={(e) => {
+                                  onChange={async (e) => {
                                     const file = e.target.files?.[0];
                                     if (file) {
-                                      compressImage(file, (base64) => {
-                                        handleWorkOpportunityChange(idx, "image", base64);
-                                      });
+                                      try {
+                                        const url = await uploadToSupabase(file);
+                                        handleWorkOpportunityChange(idx, "image", url);
+                                      } catch (error) {
+                                        console.error('Upload failed:', error);
+                                      }
                                     }
                                   }}
                                 />
@@ -1931,12 +2104,15 @@ export default function AdminView({ lang, onNavigate }: AdminViewProps) {
                                   type="file"
                                   accept="image/*"
                                   className="hidden"
-                                  onChange={(e) => {
+                                  onChange={async (e) => {
                                     const file = e.target.files?.[0];
                                     if (file) {
-                                      compressImage(file, (base64) => {
-                                        handleBusinessProgramChange(idx, "image", base64);
-                                      });
+                                      try {
+                                        const url = await uploadToSupabase(file);
+                                        handleBusinessProgramChange(idx, "image", url);
+                                      } catch (error) {
+                                        console.error('Upload failed:', error);
+                                      }
                                     }
                                   }}
                                 />
@@ -2121,12 +2297,15 @@ export default function AdminView({ lang, onNavigate }: AdminViewProps) {
                                   type="file"
                                   accept="image/*"
                                   className="hidden"
-                                  onChange={(e) => {
+                                  onChange={async (e) => {
                                     const file = e.target.files?.[0];
                                     if (file) {
-                                      compressImage(file, (base64) => {
-                                        handleVisitDestinationChange(idx, "image", base64);
-                                      });
+                                      try {
+                                        const url = await uploadToSupabase(file);
+                                        handleVisitDestinationChange(idx, "image", url);
+                                      } catch (error) {
+                                        console.error('Upload failed:', error);
+                                      }
                                     }
                                   }}
                                 />
@@ -2230,7 +2409,7 @@ export default function AdminView({ lang, onNavigate }: AdminViewProps) {
                             <div className="space-y-1">
                               <div className="flex items-center gap-2">
                                 <User className="w-4 h-4 text-blue-600" />
-                                <span className="font-bold text-sm text-slate-900">{contact.fullName}</span>
+                                <span className="font-bold text-sm text-slate-900">{contact.name}</span>
                               </div>
                               {contact.email && (
                                 <div className="flex items-center gap-2 text-xs text-slate-600">
@@ -2247,7 +2426,7 @@ export default function AdminView({ lang, onNavigate }: AdminViewProps) {
                             </div>
                             <div className="text-right">
                               <span className="text-[10px] font-mono text-slate-500 bg-slate-200 px-2 py-1 rounded">
-                                {contact.visaType}
+                                {contact.service}
                               </span>
                               {contact.createdAt && (
                                 <div className="text-[10px] text-slate-400 mt-1">
@@ -2256,10 +2435,10 @@ export default function AdminView({ lang, onNavigate }: AdminViewProps) {
                               )}
                             </div>
                           </div>
-                          {contact.profileMessage && (
+                          {contact.message && (
                             <div className="pt-2 border-t border-slate-200">
                               <p className="text-xs text-slate-700 leading-relaxed">
-                                {contact.profileMessage}
+                                {contact.message}
                               </p>
                             </div>
                           )}

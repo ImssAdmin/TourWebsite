@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { 
-  GraduationCap, Globe, ShieldCheck, Award, MessageSquare, 
-  ArrowRight, CheckCircle2, ChevronDown, HelpCircle, 
+import {
+  GraduationCap, Globe, ShieldCheck, Award, MessageSquare,
+  ArrowRight, CheckCircle2, ChevronDown, HelpCircle,
   ChevronRight, Briefcase, Compass, Sparkles
 } from "lucide-react";
 import { translations } from "../../utils/translations";
 import { PageId } from "../../types";
 import { loadCustomData } from "../../utils/customizationStore";
+import { useSEO, seoData } from "../../utils/useSEO";
+import { faqSchema, injectStructuredData } from "../../utils/structuredData";
 
 interface HomeViewProps {
   lang: "en" | "bn";
@@ -16,6 +18,9 @@ interface HomeViewProps {
 
 export default function HomeView({ lang, onNavigate }: HomeViewProps) {
   const t = translations[lang];
+
+  // SEO optimization
+  useSEO(seoData.home);
 
   // Load custom backend media and texts
   const [customData, setCustomData] = useState(() => loadCustomData());
@@ -30,6 +35,25 @@ export default function HomeView({ lang, onNavigate }: HomeViewProps) {
     };
   }, []);
 
+  // Inject FAQ schema for SEO (English only)
+  useEffect(() => {
+    const faqData = [
+      {
+        question: "Can I apply for a Canada Student Visa without IELTS?",
+        answer: "Yes, under certain circumstances such as English Medium instruction waivers (MOI) or secondary pathway courses. However, direct SDS streams require active IELTS scores of at least 6.0 bands for higher success rates. Contact our Dhaka office to assess your specific path options."
+      },
+      {
+        question: "What is the processing time for European Union Work Permits?",
+        answer: "Work permits for European countries like Poland, Romania, or Croatia typically take between 3 to 6 months for labor endorsement followed by 45 days at the embassy for final visa stamp. Quotas and timelines are adjusted periodically by state ministries."
+      },
+      {
+        question: "Do you charge any advance agency fees for student admissions?",
+        answer: "No! We do not charge advance agency service fees for admissions. Any fees are strictly structured around transparent application and regulatory costs. We believe in upfront legality to protect local applicants from fraud."
+      }
+    ];
+    injectStructuredData(faqSchema(faqData));
+  }, []);
+
   // FAQ Accordion State
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
 
@@ -40,7 +64,7 @@ export default function HomeView({ lang, onNavigate }: HomeViewProps) {
   const faqs = [
     {
       q: lang === "en" ? "Can I apply for a Canada Student Visa without IELTS?" : "আমি কি আইএলটিএস (IELTS) ছাড়া কানাডায় স্টুডেন্ট ভিসার জন্য আবেদন করতে পারব?",
-      a: lang === "en" 
+      a: lang === "en"
         ? "Yes, under certain circumstances such as English Medium instruction waivers (MOI) or secondary pathway courses. However, direct SDS streams require active IELTS scores of at least 6.0 bands for higher success rates. Contact our Dhaka office to assess your specific path options."
         : "হ্যাঁ, কিছু শর্তসাপেক্ষে যেমন ইংলিশ মিডিয়াম বা এমওআই (MOI) সার্টিফিকেট ওয়েভার ব্যবহার করে অথবা জেনেরিক পাথওয়ে কোর্সে ভর্তি হয়ে। তবে সাকসেস রেট বাড়াতে ভালো আইএলটিএস স্কোর থাকা বাঞ্ছনীয়। বিস্তারিত জানতে আমাদের ঢাকা অফিসে যোগাযোগ করুন।"
     },
@@ -134,10 +158,10 @@ export default function HomeView({ lang, onNavigate }: HomeViewProps) {
 
   return (
     <div className="bg-slate-50 text-slate-800 min-h-screen">
-      
+
       {/* ================= HERO SLIDER SECTION ================= */}
       <section className="relative w-full h-[50vh] min-h-[350px] sm:min-h-[400px] md:h-[60vh] md:min-h-[460px] max-h-[520px] bg-slate-950 text-white overflow-hidden z-20">
-        
+
         {/* Background Image Slider with Crossfade Transition */}
         <div className="absolute inset-0 z-0">
           <AnimatePresence mode="wait">
@@ -164,9 +188,9 @@ export default function HomeView({ lang, onNavigate }: HomeViewProps) {
         {/* Text Overlay & Interactive Content container */}
         <div className="absolute inset-0 z-20 flex flex-col justify-end pb-8 sm:pb-12 px-6">
           <div className="max-w-4xl mx-auto w-full text-center space-y-4">
-            
+
             {/* Top Badge Overlay */}
-            <motion.div 
+            <motion.div
               key={`badge-${currentSlide}`}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -199,20 +223,20 @@ export default function HomeView({ lang, onNavigate }: HomeViewProps) {
             </motion.div>
 
             {/* Interactive Call to Actions */}
-            <motion.div 
+            <motion.div
               key={`actions-${currentSlide}`}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
               className="flex items-center justify-center gap-3 pt-1"
             >
-              <button 
+              <button
                 onClick={() => onNavigate("contact")}
                 className="px-5 py-2.5 sm:px-7 sm:py-3 bg-white text-slate-950 font-bold rounded-lg hover:bg-slate-100 shadow-lg text-xs uppercase tracking-widest transition-all duration-250 cursor-pointer active:scale-95"
               >
                 {t.home.applyBtn}
               </button>
-              <button 
+              <button
                 onClick={() => {
                   const srvId = currentSlide === 0 || currentSlide === 1 ? "student-visa" : "work-permit";
                   onNavigate(srvId as PageId);
@@ -229,11 +253,10 @@ export default function HomeView({ lang, onNavigate }: HomeViewProps) {
                 <button
                   key={i}
                   onClick={() => setCurrentSlide(i)}
-                  className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                    currentSlide === i 
-                      ? "w-7 bg-blue-400 shadow-md" 
-                      : "w-2 bg-white/30 hover:bg-white/50"
-                  }`}
+                  className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${currentSlide === i
+                    ? "w-7 bg-blue-400 shadow-md"
+                    : "w-2 bg-white/30 hover:bg-white/50"
+                    }`}
                   aria-label={`Go to slide ${i + 1}`}
                 />
               ))}
@@ -262,7 +285,7 @@ export default function HomeView({ lang, onNavigate }: HomeViewProps) {
       {/* ================= SUCCESS STATISTICS STRIP ================= */}
       <section className="bg-white border-b border-slate-100 py-10 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8">
-          
+
           <div className="text-center space-y-1">
             <div className="text-2.5xl sm:text-3.5xl font-black text-blue-600 font-sans tracking-tight">
               {lang === "en" ? customData.statsProcessedEn : customData.statsProcessedBn}
@@ -313,7 +336,7 @@ export default function HomeView({ lang, onNavigate }: HomeViewProps) {
               </h2>
             </div>
             <div className="relative rounded-3xl overflow-hidden aspect-video shadow-lg border border-slate-200 bg-slate-900">
-              <iframe 
+              <iframe
                 src={(() => {
                   const url = customData.homeVideoUrl;
                   if (!url) return "";
@@ -339,7 +362,7 @@ export default function HomeView({ lang, onNavigate }: HomeViewProps) {
       {/* ================= COMPANY CORPORATE INTRO ================= */}
       <section className="py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-12 gap-12 items-center">
-          
+
           <div className="lg:col-span-6 space-y-5">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">
               <Globe className="w-3.5 h-3.5" />
@@ -352,7 +375,7 @@ export default function HomeView({ lang, onNavigate }: HomeViewProps) {
               <p>{lang === "en" ? customData.aboutDesc1En : customData.aboutDesc1Bn}</p>
               <p>{lang === "en" ? customData.aboutDesc2En : customData.aboutDesc2Bn}</p>
             </div>
-            
+
             <div className="pt-3">
               <h3 className="font-bold text-slate-950 uppercase tracking-wider text-xs mb-3">
                 {t.home.whyChooseUs}
@@ -379,7 +402,7 @@ export default function HomeView({ lang, onNavigate }: HomeViewProps) {
                   <span className="text-xs font-bold uppercase tracking-wider text-blue-600">Popular Relocation Destinies</span>
                   <span className="text-[10px] text-slate-400 font-mono">{lang === "en" ? "REAL-TIME SLOTS AVAILABLE" : "আসন সংখ্যা সীমিত"}</span>
                 </div>
-                
+
                 <div className="grid grid-cols-1 gap-4">
                   {customData.destinations.map((dst, i) => {
                     const countryName = lang === "en" ? dst.nameEn : dst.nameBn;
@@ -388,27 +411,27 @@ export default function HomeView({ lang, onNavigate }: HomeViewProps) {
                       <div key={i} className="bg-white rounded-2xl border border-slate-150 overflow-hidden flex flex-row items-stretch min-h-[105px] sm:min-h-[112px] h-auto hover:shadow-md transition-all duration-300 gap-3">
                         {/* Beside each country, use its iconic picture on the left side */}
                         <div className="relative w-20 sm:w-28 overflow-hidden shrink-0 bg-slate-100">
-                          <img 
-                            src={dst.image || "https://images.unsplash.com/photo-1507608869274-d3177c8bb4c7?auto=format&fit=crop&w=300&q=80"} 
-                            alt={countryName} 
-                            className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" 
+                          <img
+                            src={dst.image || "https://images.unsplash.com/photo-1507608869274-d3177c8bb4c7?auto=format&fit=crop&w=300&q=80"}
+                            alt={countryName}
+                            className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                             referrerPolicy="no-referrer"
                             onError={(e) => {
                               (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1507608869274-d3177c8bb4c7?auto=format&fit=crop&w=300&q=80";
                             }}
                           />
                         </div>
-                        
+
                         <div className="flex-1 min-w-0 pr-3 py-2.5 flex flex-col justify-between">
                           <div className="space-y-1">
                             <div className="flex items-center gap-2">
                               <span className="text-lg leading-none shrink-0" aria-hidden="true">{dst.flag}</span>
                               <span className="text-xs sm:text-sm font-black text-slate-900 uppercase tracking-wide truncate">{countryName}</span>
                             </div>
-                            
+
                             <p className="text-[10px] sm:text-[11px] leading-snug text-slate-500 font-light line-clamp-2 md:line-clamp-3">{countryDesc}</p>
                           </div>
-                          
+
                           {/* Book Now Button next to the flag/info */}
                           <div className="flex justify-end pt-1">
                             <button
@@ -438,7 +461,7 @@ export default function HomeView({ lang, onNavigate }: HomeViewProps) {
       {/* ================= BENTO CATEGORIES PREVIEWS ================= */}
       <section className="py-20 bg-white border-t border-b border-slate-150">
         <div className="max-w-7xl mx-auto px-6">
-          
+
           <div className="text-center max-w-2xl mx-auto space-y-4 mb-16">
             <h2 className="text-2.5xl sm:text-3.5xl font-sans font-black text-slate-900 tracking-tight">
               {lang === "en" ? "Explore Our Visa Services" : "আমাদের ভিসা সেবা সমূহ"}
@@ -457,44 +480,45 @@ export default function HomeView({ lang, onNavigate }: HomeViewProps) {
             ]).map((srv, idx) => {
               const Icon = srv.id === "student-visa" ? GraduationCap : srv.id === "visit-visa" ? Globe : srv.id === "work-permit" ? Briefcase : Compass;
               return (
-              <div 
-                key={srv.id}
-                onClick={() => onNavigate(srv.id as PageId)}
-                className="bg-white rounded-2xl border border-slate-200 overflow-hidden transition-all duration-300 hover:border-blue-500 hover:scale-[1.02] shadow-sm cursor-pointer flex flex-col justify-between group"
-              >
-                <div>
-                  <div className="relative h-32 w-full overflow-hidden bg-slate-100">
-                    <img 
-                      src={srv.image || "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=600&q=80"} 
-                      alt={lang === "en" ? srv.titleEn : srv.titleBn} 
-                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" 
-                      referrerPolicy="no-referrer"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=600&q=80";
-                      }}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent"></div>
-                    
-                    <div className="absolute bottom-3 left-4 flex items-center gap-2 text-white">
-                      <div className="w-8 h-8 rounded-lg bg-blue-600/30 backdrop-blur-md flex items-center justify-center text-white border border-white/20">
-                        <Icon className="w-4.5 h-4.5" />
+                <div
+                  key={srv.id}
+                  onClick={() => onNavigate(srv.id as PageId)}
+                  className="bg-white rounded-2xl border border-slate-200 overflow-hidden transition-all duration-300 hover:border-blue-500 hover:scale-[1.02] shadow-sm cursor-pointer flex flex-col justify-between group"
+                >
+                  <div>
+                    <div className="relative h-32 w-full overflow-hidden bg-slate-100">
+                      <img
+                        src={srv.image || "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=600&q=80"}
+                        alt={lang === "en" ? srv.titleEn : srv.titleBn}
+                        className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                        referrerPolicy="no-referrer"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=600&q=80";
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent"></div>
+
+                      <div className="absolute bottom-3 left-4 flex items-center gap-2 text-white">
+                        <div className="w-8 h-8 rounded-lg bg-blue-600/30 backdrop-blur-md flex items-center justify-center text-white border border-white/20">
+                          <Icon className="w-4.5 h-4.5" />
+                        </div>
+                        <span className="text-[10px] text-blue-200 font-mono tracking-wider font-bold">VISA DIVISION</span>
                       </div>
-                      <span className="text-[10px] text-blue-200 font-mono tracking-wider font-bold">VISA DIVISION</span>
+                    </div>
+
+                    <div className="p-5 space-y-2">
+                      <h3 className="text-xs sm:text-sm font-black text-slate-900 uppercase tracking-wide">{lang === "en" ? srv.titleEn : srv.titleBn}</h3>
+                      <p className="text-xs text-slate-500 leading-relaxed font-light">{lang === "en" ? srv.descEn : srv.descBn}</p>
                     </div>
                   </div>
 
-                  <div className="p-5 space-y-2">
-                    <h3 className="text-xs sm:text-sm font-black text-slate-900 uppercase tracking-wide">{lang === "en" ? srv.titleEn : srv.titleBn}</h3>
-                    <p className="text-xs text-slate-500 leading-relaxed font-light">{lang === "en" ? srv.descEn : srv.descBn}</p>
+                  <div className="px-5 pb-5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-mono font-bold text-slate-400">
+                    <span className="text-blue-600 font-bold font-sans">{srv.num} VISAS</span>
+                    <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
-                
-                <div className="px-5 pb-5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-mono font-bold text-slate-400">
-                  <span className="text-blue-600 font-bold font-sans">{srv.num} VISAS</span>
-                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
-                </div>
-              </div>
-            )})}
+              )
+            })}
           </div>
 
         </div>
@@ -504,7 +528,7 @@ export default function HomeView({ lang, onNavigate }: HomeViewProps) {
       <section className="py-20 bg-slate-50" id="calculator">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-12 gap-12 items-center">
-            
+
             <div className="lg:col-span-5 space-y-5">
               <div className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">
                 <Compass className="w-3.5 h-3.5" />
@@ -518,7 +542,7 @@ export default function HomeView({ lang, onNavigate }: HomeViewProps) {
                   ? "Select your academic parameters to see real-life visa admissions feasibility and institutional criteria instantly. Completely transparent calculations."
                   : "আপনার একাডেমিক বিবরণী যোগ করে সরাসরি আপনার কাঙ্ক্ষিত দেশে ভিসা আবেদনের যোগ্যতা তাৎক্ষণিক জেনে নিন। কোনো প্রকার ভুল পরামর্শ ছাড়া শতভাগ নির্ভরযোগ্য সেবা।"}
               </p>
-              
+
               <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl space-y-1.5 text-xs text-slate-600">
                 <span className="font-bold text-blue-700 block uppercase">
                   {lang === "en" ? "💡 Legal Advice Notice" : "💡 আইনি পরামর্শের নোটিশ"}
@@ -534,7 +558,7 @@ export default function HomeView({ lang, onNavigate }: HomeViewProps) {
             {/* Calculator interactive box */}
             <div className="lg:col-span-7 bg-white p-7 rounded-3xl border border-blue-100 shadow-xl space-y-6">
               <form onSubmit={calculateEligibility} className="space-y-4">
-                
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Destination Country */}
                   <div className="space-y-1.5">
@@ -632,7 +656,7 @@ export default function HomeView({ lang, onNavigate }: HomeViewProps) {
                       <p className="text-xs text-slate-650 leading-relaxed font-sans font-light whitespace-pre-line text-slate-600">
                         {calculatedRes}
                       </p>
-                      
+
                       <div className="pt-3 flex justify-end">
                         <button
                           onClick={() => onNavigate("contact")}
@@ -664,8 +688,8 @@ export default function HomeView({ lang, onNavigate }: HomeViewProps) {
               {lang === "en" ? "Our Team" : "আমাদের টিম"}
             </h2>
             <p className="text-sm font-medium text-slate-500">
-              {lang === "en" 
-                ? "Dedicated professionals committed to making your global relocation journey smooth, transparent, and successful." 
+              {lang === "en"
+                ? "Dedicated professionals committed to making your global relocation journey smooth, transparent, and successful."
                 : "আপনাদের নিরাপদ ও সঠিক গাইডেন্স প্রদান করতে আমাদের রয়েছে একদল অভিজ্ঞ ও নিষ্ঠাবান প্রফেশনালস।"}
             </p>
           </div>
@@ -714,7 +738,7 @@ export default function HomeView({ lang, onNavigate }: HomeViewProps) {
       {/* ================= TESTIMONIALS / SUCCESS STORIES ================= */}
       <section className="py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-6">
-          
+
           <div className="text-center max-w-2xl mx-auto space-y-4 mb-16">
             <h2 className="text-2.5xl sm:text-3.5xl font-sans font-black text-slate-900 tracking-tight">
               {t.home.successStoriesTitle}
@@ -726,7 +750,7 @@ export default function HomeView({ lang, onNavigate }: HomeViewProps) {
 
           <div className="grid md:grid-cols-3 gap-8">
             {successStories.map((story, i) => (
-              <div 
+              <div
                 key={i}
                 className="bg-white p-6 rounded-3xl border border-slate-200 hover:border-blue-500/40 shadow-sm flex flex-col justify-between space-y-6 transition-all duration-300"
               >
@@ -737,9 +761,9 @@ export default function HomeView({ lang, onNavigate }: HomeViewProps) {
                 </div>
 
                 <div className="flex items-center gap-3.5 pt-4 border-t border-slate-100">
-                  <img 
-                    src={story.image} 
-                    alt={story.name} 
+                  <img
+                    src={story.image}
+                    alt={story.name}
                     referrerPolicy="no-referrer"
                     className="w-11 h-11 object-cover rounded-full bg-slate-200 border border-slate-100"
                   />
@@ -759,7 +783,7 @@ export default function HomeView({ lang, onNavigate }: HomeViewProps) {
       {/* ================= FAQS ACCORDION SECTION ================= */}
       <section className="py-20 bg-white border-t border-b border-slate-150">
         <div className="max-w-4xl mx-auto px-6">
-          
+
           <div className="text-center space-y-4 mb-16">
             <h2 className="text-2.5xl sm:text-3.5xl font-sans font-black text-slate-900 tracking-tight">
               {t.common.faqTitle}
@@ -773,7 +797,7 @@ export default function HomeView({ lang, onNavigate }: HomeViewProps) {
             {faqs.map((faq, idx) => {
               const isOpen = openFaqIndex === idx;
               return (
-                <div 
+                <div
                   key={idx}
                   className="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden transition-all duration-200 shadow-xs"
                 >
@@ -810,7 +834,7 @@ export default function HomeView({ lang, onNavigate }: HomeViewProps) {
       {/* ================= BLOG & IMMIGRATION NEWS ================= */}
       <section className="py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-6">
-          
+
           <div className="text-center max-w-2xl mx-auto space-y-4 mb-16">
             <h2 className="text-2.5xl sm:text-3.5xl font-sans font-black text-slate-900 tracking-tight">
               {t.home.blogTitle}
@@ -822,7 +846,7 @@ export default function HomeView({ lang, onNavigate }: HomeViewProps) {
 
           <div className="grid md:grid-cols-3 gap-8">
             {blogs.map((blog, idx) => (
-              <article 
+              <article
                 key={idx}
                 className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm flex flex-col justify-between hover:border-blue-500/40 transition-all duration-300"
               >
@@ -831,18 +855,18 @@ export default function HomeView({ lang, onNavigate }: HomeViewProps) {
                     <span className="text-blue-600 font-bold">{blog.tag}</span>
                     <span className="text-slate-400">{blog.date}</span>
                   </div>
-                  
+
                   <h3 className="text-sm font-bold text-slate-900 leading-snug hover:text-blue-600 cursor-pointer">
                     {blog.title}
                   </h3>
-                  
+
                   <p className="text-[11.5px] text-slate-500 font-light leading-relaxed">
                     {blog.desc}
                   </p>
                 </div>
 
                 <div className="p-6 pt-0 border-t border-slate-100 flex justify-end">
-                  <button 
+                  <button
                     onClick={() => onNavigate("contact")}
                     className="text-[10px] font-mono font-bold text-blue-600 uppercase hover:underline flex items-center gap-1 cursor-pointer"
                   >
