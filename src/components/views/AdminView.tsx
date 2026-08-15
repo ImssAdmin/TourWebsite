@@ -73,6 +73,15 @@ export default function AdminView({ lang, onNavigate }: AdminViewProps) {
     }
   }, [activeTab, isLoggedIn]);
 
+  // Listen for custom data updates from server/localStorage
+  React.useEffect(() => {
+    const handleUpdate = () => {
+      setCustomData(loadCustomData());
+    };
+    window.addEventListener("customDataUpdated", handleUpdate);
+    return () => window.removeEventListener("customDataUpdated", handleUpdate);
+  }, []);
+
   // Secure login verification
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -521,8 +530,8 @@ export default function AdminView({ lang, onNavigate }: AdminViewProps) {
     }
   };
 
-  const handleSave = () => {
-    const success = saveCustomData(customData);
+  const handleSave = async () => {
+    const success = await saveCustomData(customData);
     if (success) {
       triggerNotification(
         "success",

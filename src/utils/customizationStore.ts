@@ -844,24 +844,35 @@ export function initCustomDataFromServer() {
     .catch(console.error);
 }
 
-export function saveCustomData(data: CustomData): boolean {
+export async function saveCustomData(data: CustomData): Promise<boolean> {
   try {
+    // Save to localStorage first for immediate UI update
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 
-    fetch("/api/data", {
+    // Save to server database
+    const res = await fetch("/api/data", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)
-    }).then(res => {
-      if (res.status === 401 || res.status === 403) {
-        alert("You do not have permission to save modifications.");
-      }
-    }).catch(console.error);
+    });
+
+    if (res.status === 401 || res.status === 403) {
+      alert("You do not have permission to save modifications.");
+      return false;
+    }
+
+    if (!res.ok) {
+      const error = await res.json();
+      console.error("Failed to save to server:", error);
+      alert(`Failed to save to server: ${error.error || 'Unknown error'}. Changes are saved locally only.`);
+      return false;
+    }
 
     window.dispatchEvent(new Event("customDataUpdated"));
     return true;
   } catch (err) {
     console.error("Error saving custom template data:", err);
+    alert(`Network error: ${err instanceof Error ? err.message : 'Unknown error'}. Changes are saved locally only.`);
     return false;
   }
 }
