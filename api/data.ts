@@ -16,7 +16,8 @@ export default async function handler(req, res) {
       }
     } catch (error) {
       console.error("Failed to read data:", error);
-      return res.status(500).json({ error: "Failed to read data" });
+      console.error("Error details:", error.message, error.stack);
+      return res.status(500).json({ error: "Failed to read data", details: error.message });
     }
   }
 
@@ -32,6 +33,10 @@ export default async function handler(req, res) {
       console.log(`Audit log: Data updated by ${user.username} (${user.role})`);
       const data = req.body;
 
+      if (!data || typeof data !== 'object') {
+        return res.status(400).json({ error: "Invalid data format" });
+      }
+
       // Update or create the custom data record
       // Using findFirst since we just want a single document store
       const existingRecord = await prisma.customData.findFirst();
@@ -41,16 +46,19 @@ export default async function handler(req, res) {
           where: { id: existingRecord.id },
           data: { data: data }
         });
+        console.log(`✓ Data updated successfully for record ${existingRecord.id}`);
       } else {
-        await prisma.customData.create({
+        const newRecord = await prisma.customData.create({
           data: { data: data }
         });
+        console.log(`✓ New data record created with ID ${newRecord.id}`);
       }
 
       return res.status(200).json({ message: "Data saved successfully" });
     } catch (error) {
       console.error("Failed to save data:", error);
-      return res.status(500).json({ error: "Failed to save data" });
+      console.error("Error details:", error.message, error.stack);
+      return res.status(500).json({ error: "Failed to save data", details: error.message });
     }
   }
 
